@@ -1,0 +1,20 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import home from '../Page/home';
+
+const Laporan = () => {
+    return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center"
+            >
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">Laporan Keuangan</h1>
+                <p className="text-gray-600">Transparansi laporan keuangan dan penyaluran dana.</p>
+            </motion.div>
+        </div>
+    );
+};
+
+export default Laporan;
