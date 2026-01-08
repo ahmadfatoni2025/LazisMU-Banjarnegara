@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../ui/Navbar';
+import FAQAccordion from '../ui/FAQAccordion';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -718,6 +719,8 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <FAQAccordion />
 
       {/* Footer */}
       <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white pt-16 pb-8">
