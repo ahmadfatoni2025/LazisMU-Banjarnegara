@@ -1,6 +1,4 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import home from '../Page/home';
 
 const Laporan = () => {
     return (

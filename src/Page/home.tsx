@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Heart, Menu, X,
+  Heart,
   Users,
   Phone, Mail, MapPin, Facebook,
   Instagram, Youtube, MessageCircle,
@@ -14,7 +14,7 @@ import {
   Calendar,
   FileText,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Navbar from '../ui/Navbar';
 import FAQAccordion from '../ui/FAQAccordion';
 
