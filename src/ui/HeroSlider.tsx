@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -34,17 +34,17 @@ const HeroSlider = () => {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrent((prev) => (prev + 1) % slides.length);
+            setCurrent((prev: number) => (prev + 1) % slides.length);
         }, 5000); // Slide every 5 seconds
         return () => clearInterval(timer);
     }, []);
 
     const nextSlide = () => {
-        setCurrent((prev) => (prev + 1) % slides.length);
+        setCurrent((prev: number) => (prev + 1) % slides.length);
     };
 
     const prevSlide = () => {
-        setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+        setCurrent((prev: number) => (prev === 0 ? slides.length - 1 : prev - 1));
     };
 
     return (

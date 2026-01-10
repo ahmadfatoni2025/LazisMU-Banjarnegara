@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { User, Calendar, Folder, Search, Phone, Instagram, Facebook, Youtube, Twitter, Tag, Share2, Eye } from 'lucide-react';
+import { User, Calendar, Search, Phone, Instagram, Facebook, Twitter, Tag, Eye } from 'lucide-react';
 import Navbar from '../ui/Navbar';
 import { useState, useEffect } from 'react';
 

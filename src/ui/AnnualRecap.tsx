@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, TrendingUp, Users, HeartHandshake, Award } from 'lucide-react';
 
 const cards = [
