@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import { useState, useEffect } from 'react';
-=======
->>>>>>> e9eb8fdbec125e9f25dc5f79923044c16f9b2516
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
