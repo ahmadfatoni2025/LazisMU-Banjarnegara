@@ -1,4 +1,4 @@
-import component { useState, useEffect } from 'react';
+import components { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Cookie, ShieldCheck } from 'lucide-react';
 
