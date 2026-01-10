@@ -143,7 +143,7 @@ const AnnualRecap = () => {
                             viewport={{ once: true }}
                             className="min-w-[300px] md:min-w-[350px] snap-center"
                         >
-                            <div className="h-full bg-gray-50 rounded-2xl p-8 hover:bg-black/5 transition-colors duration-300 group cursor-pointer border border-transparent hover:border-orange-100 relative overflow-hidden">
+                            <div className="h-full bg-gray-50 border border-slate-300 rounded-2xl p-8 hover:bg-black/5 transition-colors duration-300 group cursor-pointerhover:border-orange-100 relative overflow-hidden">
                                 {/* Hover Image Background - subtle watermark */}
                                 <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 z-0 pointer-events-none">
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-black/50 to-black/5 z-10" />

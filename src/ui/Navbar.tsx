@@ -30,19 +30,28 @@ const navItems = [
     },
     { name: 'Program', path: '/program' },
     { name: 'Kantor Layanan', path: '/kantor' },
-    { name: 'Kalkulator Zakat', path: '/kalkulator-zakat', variant: 'primary' },
 ];
 
 const Navbar = () => {
-    const [scrolled, setScrolled] = useState(false);
+    const [isWindowScrolled, setIsWindowScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const location = useLocation();
+
+    // Determine visibility state:
+    // Solid background (isScrolled true) if:
+    // 1. User has scrolled down (isWindowScrolled)
+    // 2. OR we are NOT on the homepage (location.pathname !== '/')
+    const isScrolled = isWindowScrolled || location.pathname !== '/';
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
+            setIsWindowScrolled(window.scrollY > 50);
         };
+        // Check immediately on mount
+        handleScroll();
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -53,48 +62,52 @@ const Navbar = () => {
         setActiveDropdown(null);
     }, [location]);
 
-    return (
-        <header className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm py-2 text-gray-800' : 'bg-transparent py-2 text-white'}`}>
-            <div className="container mx-auto px-6 lg:px-12">
-                <div className="flex items-center justify-between">
-                    {/* Logo */}
-                    <Link to="/" className="flex items-center gap-3 group">
-                        <div className={` w-16 h-16 flex items-center justify-center transition-all   `}>
-                            <a href="./home"><img src="https://lazismubanjarnegara.org/wp-content/uploads/2024/11/lazismu-logo.png" alt="Logo Lazismu Banjarnegara" /></a>
-                        </div>
-                        <div>
-                            <h1 className={`text-lg font-bold tracking-tight leading-none transition-colors ${scrolled ? 'text-gray-900 group-hover:text-orange-600' : 'text-white'}`}>
-                                Lazis Muhammadiyah
-                            </h1>
-                            <p className={`text-[10px] font-medium tracking-widest uppercase transition-colors ${scrolled ? 'text-gray-500' : 'text-white/70'}`}>Banjarnegara</p>
-                        </div>
-                    </Link>
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            console.log('Searching for:', searchQuery);
+            // Implement search logic here, e.g., navigate to search page or filter content
+            // window.location.href = `/search?q=${searchQuery}`;
+        }
+    };
 
-                    {/* Desktop Navigation */}
-                    <nav className="hidden lg:flex items-center gap-8">
+    return (
+        <header className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm py-3 text-gray-800' : 'bg-transparent py-4 text-white'}`}>
+            <div className="container mx-auto px-6 lg:px-12">
+                <div className="flex items-center justify-between gap-4">
+                    {/* Logo - Flex Shrink allowed to keep size but give space */}
+                    <div className="flex-shrink-0">
+                        <Link to="/" className="flex items-center gap-3 group">
+                            <div className={`w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center transition-all p-1`}>
+                                <img src="https://lazismubanjarnegara.org/wp-content/uploads/2024/11/lazismu-logo.png" alt="Logo Lazismu Banjarnegara" className="w-full h-full object-contain" />
+                            </div>
+                            <div className="hidden sm:block">
+                                <h1 className={`text-lg font-bold tracking-tight leading-none transition-colors ${isScrolled ? 'text-gray-900 group-hover:text-orange-600' : 'text-white'}`}>
+                                    Lazis Muhammadiyah
+                                </h1>
+                                <p className={`text-[10px] font-medium tracking-widest uppercase transition-colors ${isScrolled ? 'text-gray-500' : 'text-white/70'}`}>Banjarnegara</p>
+                            </div>
+                        </Link>
+                    </div>
+
+                    {/* Desktop Navigation - Centered */}
+                    <nav className="hidden lg:flex items-center justify-center gap-6 flex-1">
                         {navItems.map((item) => (
                             <div key={item.name} className="relative group">
                                 {item.children ? (
                                     <button
-                                        className={`flex items-center gap-1 text-sm font-medium transition-colors ${scrolled ? 'text-gray-600 hover:text-orange-600' : 'text-white/90 hover:text-white'}`}
+                                        className={`flex items-center gap-1 text-sm font-medium transition-colors ${isScrolled ? 'text-gray-600 hover:text-orange-600' : 'text-white/90 hover:text-white'}`}
                                         onMouseEnter={() => setActiveDropdown(item.name)}
                                         onClick={() => setActiveDropdown(activeDropdown === item.name ? null : item.name)}
                                     >
                                         {item.name}
-                                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${scrolled ? '' : 'text-white/70'} group-hover:rotate-180`} />
+                                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isScrolled ? '' : 'text-white/70'} group-hover:rotate-180`} />
                                     </button>
                                 ) : (
                                     <Link
                                         to={item.path}
-                                        className={
-                                            item.variant === 'primary'
-                                                ? `px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-md transform hover:-translate-y-0.5 ${scrolled
-                                                    ? 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-500/30'
-                                                    : 'bg-white text-orange-600 hover:bg-orange-50'
-                                                }`
-                                                : `text-sm font-medium transition-colors ${scrolled ? 'text-gray-600 hover:text-orange-600' : 'text-white/90 hover:text-white'
-                                                }`
-                                        }
+                                        className={`text-sm font-medium transition-colors ${isScrolled ? 'text-gray-600 hover:text-orange-600' : 'text-white/90 hover:text-white'
+                                            }`}
                                     >
                                         {item.name}
                                     </Link>
@@ -102,13 +115,13 @@ const Navbar = () => {
 
                                 {/* Dropdown Menu */}
                                 {item.children && (
-                                    <div className="absolute top-full left-0 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 w-64 z-50">
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 min-w-[240px] z-50">
                                         <div className="bg-white rounded-xl shadow-xl shadow-orange-500/10 border border-gray-100 overflow-hidden py-2">
                                             {item.children.map((child) => (
                                                 <Link
                                                     key={child.name}
                                                     to={child.path}
-                                                    className="block px-4 py-2.5 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50 font-medium transition-colors"
+                                                    className="block px-4 py-2.5 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50 font-medium transition-colors text-center"
                                                 >
                                                     {child.name}
                                                 </Link>
@@ -120,28 +133,72 @@ const Navbar = () => {
                         ))}
                     </nav>
 
-                    {/* CTA Buttons */}
-                    <div className="flex items-center gap-4">
-                        <motion.button
-                            whileHover={{ width: 'auto' }}
-                            initial={{ width: '2.5rem' }}
-                            className={`hidden lg:flex items-center overflow-hidden h-10 rounded-full transition-all duration-300 ${scrolled
-                                    ? 'bg-gray-100/50 hover:bg-white text-gray-800 shadow-sm border border-transparent hover:border-orange-100 hover:shadow-md'
-                                    : 'bg-white/10 hover:bg-white text-white hover:text-orange-600 backdrop-blur-sm'
+                    {/* Actions and Mobile Menu */}
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                        {/* Search Component - Expandable */}
+                        <div
+                            className={`hidden lg:flex items-center transition-all duration-300 ease-out ${isSearchOpen ? 'w-72 bg-opacity-100' : 'w-10 bg-opacity-0'
+                                } ${isScrolled
+                                    ? 'bg-white text-gray-800'
+                                    : 'bg-white/10 text-white'
+                                } rounded-full relative overflow-hidden ${isSearchOpen && isScrolled ? 'shadow-md border border-gray-100' : ''}`}
+                        >
+                            <button
+                                onClick={() => {
+                                    if (!isSearchOpen) {
+                                        setIsSearchOpen(true);
+                                        setTimeout(() => document.getElementById('search-input')?.focus(), 100);
+                                    }
+                                }}
+                                className={`w-10 h-10 flex items-center justify-center flex-shrink-0 transition-colors ${isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/20'
+                                    }`}
+                            >
+                                <Search className={`w-4 h-4 ${isScrolled ? 'text-gray-600' : 'text-white'}`} />
+                            </button>
+
+                            <form
+                                onSubmit={handleSearch}
+                                className={`flex-1 transition-all duration-300 ${isSearchOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+                            >
+                                <input
+                                    id="search-input"
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Cari..."
+                                    className={`w-full bg-transparent border-none focus:ring-0 text-sm px-2 h-10 ${isScrolled ? 'text-gray-800 placeholder-gray-400' : 'text-white placeholder-white/70'
+                                        }`}
+                                />
+                            </form>
+
+                            {/* Close Button */}
+                            <button
+                                onClick={() => {
+                                    setSearchQuery('');
+                                    setIsSearchOpen(false);
+                                }}
+                                className={`w-8 h-8 flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSearchOpen ? 'opacity-100 visible' : 'opacity-0 invisible w-0'
+                                    } ${isScrolled ? 'hover:bg-gray-100 text-gray-500' : 'hover:bg-white/20 text-white'}`}
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+
+                        {/* Zakat Calculator Button */}
+                        <Link
+                            to="/kalkulator-zakat"
+                            className={`hidden lg:flex px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-md transform hover:-translate-y-0.5 whitespace-nowrap ${isScrolled
+                                ? 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-500/30'
+                                : 'bg-white text-orange-600 hover:bg-orange-50'
                                 }`}
                         >
-                            <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 cursor-pointer">
-                                <Search className="w-5 h-5" />
-                            </div>
-                            <span className="whitespace-nowrap pr-4 text-sm font-medium opacity-0 hover:opacity-100 transition-opacity duration-300">
-                                Cari di LazisMU...
-                            </span>
-                        </motion.button>
+                            Kalkulator Zakat
+                        </Link>
 
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className={`lg:hidden p-2 transition-colors ${scrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white hover:text-white/80'}`}
+                            className={`lg:hidden p-2 transition-colors ${isScrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white hover:text-white/80'}`}
                         >
                             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
@@ -160,6 +217,18 @@ const Navbar = () => {
                     >
                         <div className="container mx-auto px-6 py-6 max-h-[80vh] overflow-y-auto">
                             <div className="flex flex-col gap-1">
+                                {/* Mobile Search */}
+                                <div className="mb-4 relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Cari di Lazismu..."
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                </div>
+
                                 {navItems.map((item) => (
                                     <div key={item.name}>
                                         {item.children ? (
@@ -195,16 +264,21 @@ const Navbar = () => {
                                         ) : (
                                             <Link
                                                 to={item.path}
-                                                className={`block text-lg font-medium py-3 border-b border-gray-50 last:border-0 ${item.variant === 'primary'
-                                                    ? 'text-orange-600 font-bold'
-                                                    : 'text-gray-900 hover:text-orange-600'
-                                                    }`}
+                                                className="block text-lg font-medium py-3 border-b border-gray-50 last:border-0 text-gray-900 hover:text-orange-600"
                                             >
                                                 {item.name}
                                             </Link>
                                         )}
                                     </div>
                                 ))}
+
+                                <Link
+                                    to="/kalkulator-zakat"
+                                    className="w-full py-3 bg-white border border-orange-600 text-orange-600 rounded-xl font-semibold mt-4 flex items-center justify-center gap-2 hover:bg-orange-50 transition-colors"
+                                >
+                                    Kalkulator Zakat
+                                </Link>
+
                                 <button
                                     onClick={() => {
                                         setMobileMenuOpen(false);
@@ -217,7 +291,7 @@ const Navbar = () => {
                                             window.location.href = '/#donasi-section';
                                         }
                                     }}
-                                    className="w-full py-4 bg-orange-600 text-white rounded-xl font-semibold mt-6 shadow-lg shadow-orange-500/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-orange-600 text-white rounded-xl font-semibold mt-2 shadow-lg shadow-orange-500/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
                                 >
                                     <span>Donasi Sekarang</span>
                                     <Heart className="w-4 h-4" fill="currentColor" />

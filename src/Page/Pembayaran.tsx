@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft,
+    Check,
     CreditCard,
     QrCode,
     Banknote,
-    CheckCircle,
-    Clock,
+    User,
+    Heart,
+    ChevronRight,
+    ChevronLeft,
     Copy,
-    Heart
+    Clock,
+    AlertCircle
 } from 'lucide-react';
 import Navbar from '../ui/Navbar';
 
@@ -19,62 +23,99 @@ interface DonationData {
     isAnonymous: boolean;
 }
 
+// Payment Methods Data
+const BANKS = [
+    { id: 'bsi', name: 'Bank Syariah Indonesia (BSI)', code: '451', icon: 'BSI' },
+    { id: 'bri', name: 'Bank Rakyat Indonesia (BRI)', code: '002', icon: 'BRI' },
+    { id: 'mandiri', name: 'Bank Mandiri', code: '008', icon: 'MANDIRI' },
+    { id: 'bca', name: 'Bank Central Asia (BCA)', code: '014', icon: 'BCA' },
+    { id: 'muamalat', name: 'Bank Muamalat', code: '147', icon: 'BMI' },
+];
+
+const EWALLETS = [
+    { id: 'gopay', name: 'GoPay', icon: 'GOPAY' },
+    { id: 'ovo', name: 'OVO', icon: 'OVO' },
+    { id: 'dana', name: 'DANA', icon: 'DANA' },
+    { id: 'shopeepay', name: 'ShopeePay', icon: 'SHOPEE' },
+    { id: 'qris', name: 'QRIS', icon: <QrCode className="w-6 h-6" /> }
+];
+
 const Pembayaran = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const donationData = location.state as DonationData;
 
-    const [selectedPayment, setSelectedPayment] = useState<string>('');
-    const [countdown, setCountdown] = useState(3600); // 1 hour in seconds
-    const [copied, setCopied] = useState(false);
-    const [editableAmount, setEditableAmount] = useState<string>(
+    // Stepper State
+    const [activeStep, setActiveStep] = useState(0);
+    const steps = ['Detail Donasi', 'Data Diri', 'Metode Pembayaran', 'Instruksi'];
+
+    // Form States
+    const [amount, setAmount] = useState<string>(
         donationData?.amount && donationData.amount > 0 ? donationData.amount.toString() : ''
     );
-    const [showAmountInput, setShowAmountInput] = useState(
-        !donationData?.amount || donationData.amount === 0
-    );
-
-    // Donor information state
+    const [program, setProgram] = useState(donationData?.program || 'Infaq Shadaqah Umum');
     const [donorInfo, setDonorInfo] = useState({
         name: '',
         email: '',
         phone: '',
-        message: ''
+        message: '',
+        isAnonymous: donationData?.isAnonymous || false
     });
-    const [isAnonymous, setIsAnonymous] = useState(donationData?.isAnonymous || false);
-    const [showDonorForm, setShowDonorForm] = useState(false);
+    const [selectedPayment, setSelectedPayment] = useState<any>(null);
 
-    // Virtual Account Number (dummy)
-    const vaNumber = '8808' + Math.floor(Math.random() * 1000000000000);
+    // Timer State for Instruction
+    const [countdown, setCountdown] = useState(3600);
+
+    // UI State
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
-        // Redirect if no donation data
-        if (!donationData) {
-            navigate('/');
-            return;
+        if (!donationData && activeStep === 0) {
+            // Optional: Redirect if strictly required, but for UX let them fill it
         }
 
-        // Countdown timer
-        const timer = setInterval(() => {
-            setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
-        }, 1000);
+        if (activeStep === 3) {
+            const timer = setInterval(() => setCountdown(p => Math.max(0, p - 1)), 1000);
+            return () => clearInterval(timer);
+        }
+    }, [activeStep]);
 
-        return () => clearInterval(timer);
-    }, [donationData, navigate]);
+    const handleNext = () => {
+        // Validation
+        if (activeStep === 0) {
+            if (!amount || parseInt(amount) < 10000) {
+                alert('Minimal donasi adalah Rp 10.000');
+                return;
+            }
+        }
+        if (activeStep === 1) {
+            if (!donorInfo.isAnonymous && (!donorInfo.name || !donorInfo.email || !donorInfo.phone)) {
+                alert('Mohon lengkapi data diri Anda');
+                return;
+            }
+            if (donorInfo.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorInfo.email)) {
+                alert('Format email tidak valid');
+                return;
+            }
+        }
+        if (activeStep === 2) {
+            if (!selectedPayment) {
+                alert('Silakan pilih metode pembayaran');
+                return;
+            }
+        }
 
-    const formatTime = (seconds: number) => {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        setActiveStep((prev) => prev + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0,
-        }).format(amount);
+    const handleBack = () => {
+        setActiveStep((prev) => prev - 1);
+    };
+
+    const formatCurrency = (val: number | string) => {
+        const num = typeof val === 'string' ? parseInt(val) : val;
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num || 0);
     };
 
     const copyToClipboard = (text: string) => {
@@ -83,414 +124,327 @@ const Pembayaran = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const handleAmountConfirm = () => {
-        const amount = parseInt(editableAmount);
-        if (!amount || amount < 10000) {
-            alert('Minimal donasi adalah Rp 10.000');
-            return;
-        }
-        setShowAmountInput(false);
-        setShowDonorForm(true);
+    const formatTime = (seconds: number) => {
+        const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+        const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        return `${h}:${m}:${s}`;
     };
 
-    const handleDonorInfoSubmit = () => {
-        if (!isAnonymous) {
-            if (!donorInfo.name || !donorInfo.email || !donorInfo.phone) {
-                alert('Mohon lengkapi data diri Anda');
-                return;
-            }
-            // Validate email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(donorInfo.email)) {
-                alert('Format email tidak valid');
-                return;
-            }
-            // Validate phone
-            if (donorInfo.phone.length < 10) {
-                alert('Nomor telepon tidak valid');
-                return;
-            }
-        }
-        setShowDonorForm(false);
-    };
-
-    const getCurrentAmount = () => {
-        return showAmountInput ? (parseInt(editableAmount) || 0) : (donationData?.amount || parseInt(editableAmount) || 0);
-    };
-
-    const formatInput = (value: string) => {
-        const numericValue = value.replace(/\D/g, '');
-        return numericValue;
-    };
-
-    const displayAmount = (value: string) => {
-        if (!value) return '';
-        return new Intl.NumberFormat('id-ID').format(parseInt(value));
-    };
-
-    const paymentMethods = [
-        {
-            id: 'transfer',
-            name: 'Transfer Bank',
-            icon: <Banknote className="w-6 h-6" />,
-            description: 'Transfer melalui ATM, Mobile Banking, atau Internet Banking'
-        },
-        {
-            id: 'qris',
-            name: 'QRIS',
-            icon: <QrCode className="w-6 h-6" />,
-            description: 'Scan QR Code dengan aplikasi e-wallet atau mobile banking'
-        },
-        {
-            id: 'ewallet',
-            name: 'E-Wallet',
-            icon: <CreditCard className="w-6 h-6" />,
-            description: 'Bayar dengan GoPay, OVO, Dana, atau ShopeePay'
-        }
-    ];
-
-    if (!donationData) {
-        return null;
-    }
-
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50/30">
-            <Navbar />
-
-            <div className="container mx-auto px-6 lg:px-12 pt-32 pb-16">
-                {/* Back Button */}
-                <button
-                    onClick={() => navigate('/')}
-                    className="flex items-center gap-2 text-gray-600 hover:text-orange-600 mb-8 transition-colors"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                    <span className="font-medium">Kembali ke Beranda</span>
-                </button>
-
-                <div className="max-w-4xl mx-auto">
-                    {/* Header */}
-                    <div className="text-center mb-12">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 rounded-full mb-4"
-                        >
-                            <Heart className="w-8 h-8 text-orange-600" fill="currentColor" />
-                        </motion.div>
-                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                            Selesaikan Pembayaran
-                        </h1>
-                        <p className="text-gray-600 mb-4">
-                            Terima kasih atas kepedulian Anda untuk berbagi kebaikan
-                        </p>
-
-                        {/* Category Badge */}
-                        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-full shadow-lg shadow-orange-500/30">
-                            <span className="text-sm font-bold">Kategori Donasi:</span>
-                            <span className="text-sm font-semibold">{donationData.program}</span>
+    // Render Steps
+    const renderStepContent = (step: number) => {
+        switch (step) {
+            case 0:
+                return (
+                    <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Program Donasi</label>
+                            <select
+                                value={program}
+                                onChange={(e) => setProgram(e.target.value)}
+                                className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                            >
+                                <option>Peduli Lingkungan : SAMOSIR</option>
+                                <option>Pendidikan Anak Yatim</option>
+                                <option>Kesehatan Masyarakat</option>
+                                <option>Infaq Shadaqah Umum</option>
+                                <option>Zakat Maal</option>
+                            </select>
                         </div>
-                    </div>
-
-                    {/* Countdown Timer */}
-                    <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-8 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <Clock className="w-5 h-5 text-orange-600" />
-                            <span className="text-sm font-medium text-gray-700">
-                                Selesaikan pembayaran dalam:
-                            </span>
-                        </div>
-                        <div className="text-2xl font-bold text-orange-600">
-                            {formatTime(countdown)}
-                        </div>
-                    </div>
-
-                    <div className="grid lg:grid-cols-3 gap-8">
-                        {/* Left Column - Payment Methods */}
-                        <div className="lg:col-span-2 space-y-6">
-                            {/* Donation Summary */}
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                                <h2 className="text-xl font-bold text-gray-900 mb-4">Detail Donasi</h2>
-
-                                {showAmountInput ? (
-                                    <div className="space-y-4">
-                                        <div className="py-3 border-b border-gray-100">
-                                            <span className="text-gray-600 block mb-2">Program</span>
-                                            <span className="font-semibold text-gray-900">{donationData.program}</span>
-                                        </div>
-
-                                        <div>
-                                            <label className="text-gray-600 block mb-3">Masukkan Nominal Donasi</label>
-                                            <div className="relative mb-4">
-                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg font-bold">Rp</span>
-                                                <input
-                                                    type="text"
-                                                    value={displayAmount(editableAmount)}
-                                                    onChange={(e) => setEditableAmount(formatInput(e.target.value))}
-                                                    placeholder="0"
-                                                    className="w-full py-4 pl-14 pr-4 text-2xl font-bold text-gray-900 placeholder-gray-300 outline-none bg-gradient-to-br from-gray-50 to-orange-50/30 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 transition-all"
-                                                />
-                                            </div>
-                                            <button
-                                                onClick={handleAmountConfirm}
-                                                className="w-full bg-orange-600 text-white py-3 rounded-xl font-bold hover:bg-orange-700 transition-colors"
-                                            >
-                                                Konfirmasi Nominal
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : showDonorForm ? (
-                                    <div className="space-y-4">
-                                        <div className="py-3 border-b border-gray-100">
-                                            <span className="text-gray-600 block mb-2">Program</span>
-                                            <span className="font-semibold text-gray-900">{donationData.program}</span>
-                                        </div>
-                                        <div className="py-3 border-b border-gray-100">
-                                            <span className="text-gray-600 block mb-2">Nominal Donasi</span>
-                                            <span className="font-semibold text-orange-600 text-xl">{formatCurrency(getCurrentAmount())}</span>
-                                        </div>
-
-                                        <div className="pt-4">
-                                            <h3 className="font-bold text-gray-900 mb-4">Data Diri Donatur</h3>
-
-                                            {/* Anonymous Toggle */}
-                                            <div className="mb-6 p-4 bg-orange-50 rounded-xl border border-orange-100">
-                                                <label className="flex items-center gap-3 cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isAnonymous}
-                                                        onChange={(e) => setIsAnonymous(e.target.checked)}
-                                                        className="w-5 h-5 text-orange-600 rounded focus:ring-2 focus:ring-orange-500"
-                                                    />
-                                                    <div>
-                                                        <span className="text-sm font-bold text-gray-900 block">Donasi Anonim</span>
-                                                        <span className="text-xs text-gray-600">Identitas Anda tidak akan ditampilkan</span>
-                                                    </div>
-                                                </label>
-                                            </div>
-
-                                            {!isAnonymous && (
-                                                <div className="space-y-4">
-                                                    {/* Name */}
-                                                    <div>
-                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                                            Nama Lengkap <span className="text-red-500">*</span>
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            value={donorInfo.name}
-                                                            onChange={(e) => setDonorInfo({ ...donorInfo, name: e.target.value })}
-                                                            placeholder="Masukkan nama lengkap"
-                                                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
-                                                        />
-                                                    </div>
-
-                                                    {/* Email */}
-                                                    <div>
-                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                                            Email <span className="text-red-500">*</span>
-                                                        </label>
-                                                        <input
-                                                            type="email"
-                                                            value={donorInfo.email}
-                                                            onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
-                                                            placeholder="contoh@email.com"
-                                                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
-                                                        />
-                                                    </div>
-
-                                                    {/* Phone */}
-                                                    <div>
-                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                                            Nomor Telepon <span className="text-red-500">*</span>
-                                                        </label>
-                                                        <input
-                                                            type="tel"
-                                                            value={donorInfo.phone}
-                                                            onChange={(e) => setDonorInfo({ ...donorInfo, phone: e.target.value.replace(/\D/g, '') })}
-                                                            placeholder="08123456789"
-                                                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
-                                                        />
-                                                    </div>
-
-                                                    {/* Message */}
-                                                    <div>
-                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                                            Pesan/Doa (Opsional)
-                                                        </label>
-                                                        <textarea
-                                                            value={donorInfo.message}
-                                                            onChange={(e) => setDonorInfo({ ...donorInfo, message: e.target.value })}
-                                                            placeholder="Tulis pesan atau doa Anda..."
-                                                            rows={3}
-                                                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all resize-none"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            <button
-                                                onClick={handleDonorInfoSubmit}
-                                                className="w-full bg-orange-600 text-white py-3 rounded-xl font-bold hover:bg-orange-700 transition-colors mt-4"
-                                            >
-                                                Lanjutkan ke Pembayaran
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between py-3 border-b border-gray-100">
-                                            <span className="text-gray-600">Program</span>
-                                            <span className="font-semibold text-gray-900">{donationData.program}</span>
-                                        </div>
-                                        {!isAnonymous && donorInfo.name && (
-                                            <div className="flex justify-between py-3 border-b border-gray-100">
-                                                <span className="text-gray-600">Nama Donatur</span>
-                                                <span className="font-semibold text-gray-900">{donorInfo.name}</span>
-                                            </div>
-                                        )}
-                                        {isAnonymous && (
-                                            <div className="flex justify-between py-3 border-b border-gray-100">
-                                                <span className="text-gray-600">Nama Donatur</span>
-                                                <span className="font-semibold text-gray-500 italic">Anonim</span>
-                                            </div>
-                                        )}
-                                        <div className="flex justify-between py-3 border-b border-gray-100">
-                                            <span className="text-gray-600">Nominal Donasi</span>
-                                            <span className="font-semibold text-gray-900">{formatCurrency(getCurrentAmount())}</span>
-                                        </div>
-                                        <div className="flex justify-between py-3 border-b border-gray-100">
-                                            <span className="text-gray-600">Biaya Admin</span>
-                                            <span className="font-semibold text-green-600">Gratis</span>
-                                        </div>
-                                        <div className="flex justify-between py-4 bg-orange-50 rounded-xl px-4 mt-4">
-                                            <span className="text-lg font-bold text-gray-900">Total Pembayaran</span>
-                                            <span className="text-2xl font-bold text-orange-600">{formatCurrency(getCurrentAmount())}</span>
-                                        </div>
-                                    </div>
-                                )}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Nominal Donasi</label>
+                            <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">Rp</span>
+                                <input
+                                    type="text"
+                                    value={amount ? parseInt(amount).toLocaleString('id-ID') : ''}
+                                    onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
+                                    placeholder="0"
+                                    className="w-full pl-12 p-4 text-2xl font-bold text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                                />
                             </div>
+                            <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
+                                {[50000, 100000, 250000, 500000].map(val => (
+                                    <button
+                                        key={val}
+                                        onClick={() => setAmount(val.toString())}
+                                        className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium hover:bg-orange-100 hover:text-orange-600 transition-colors whitespace-nowrap"
+                                    >
+                                        {val.toLocaleString('id-ID')}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            case 1:
+                return (
+                    <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                        <div className="p-4 bg-orange-50 rounded-xl border border-orange-100 flex items-center justify-between">
+                            <div>
+                                <h4 className="font-bold text-gray-900">Donasi Anonim</h4>
+                                <p className="text-sm text-gray-500">Sembunyikan nama saya dari publik</p>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={donorInfo.isAnonymous}
+                                    onChange={e => setDonorInfo({ ...donorInfo, isAnonymous: e.target.checked })}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
 
-                            {/* Payment Method Selection */}
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                                <h2 className="text-xl font-bold text-gray-900 mb-4">Pilih Metode Pembayaran</h2>
-                                <div className="space-y-3">
-                                    {paymentMethods.map((method) => (
-                                        <button
-                                            key={method.id}
-                                            onClick={() => setSelectedPayment(method.id)}
-                                            className={`w-full p-4 rounded-xl border-2 transition-all text-left ${selectedPayment === method.id
-                                                ? 'border-orange-500 bg-orange-50'
-                                                : 'border-gray-200 hover:border-orange-300 bg-white'
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selectedPayment === method.id ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600'
-                                                    }`}>
-                                                    {method.icon}
-                                                </div>
-                                                <div className="flex-1">
-                                                    <div className="font-bold text-gray-900">{method.name}</div>
-                                                    <div className="text-sm text-gray-500">{method.description}</div>
-                                                </div>
-                                                {selectedPayment === method.id && (
-                                                    <CheckCircle className="w-6 h-6 text-orange-500" />
-                                                )}
-                                            </div>
-                                        </button>
-                                    ))}
+                        {!donorInfo.isAnonymous && (
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
+                                    <input
+                                        type="text"
+                                        value={donorInfo.name}
+                                        onChange={(e) => setDonorInfo({ ...donorInfo, name: e.target.value })}
+                                        className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                                        placeholder="Nama Anda"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                                    <input
+                                        type="email"
+                                        value={donorInfo.email}
+                                        onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
+                                        className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                                        placeholder="email@contoh.com"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">WhatsApp</label>
+                                    <input
+                                        type="tel"
+                                        value={donorInfo.phone}
+                                        onChange={(e) => setDonorInfo({ ...donorInfo, phone: e.target.value })}
+                                        className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                                        placeholder="0812..."
+                                    />
                                 </div>
                             </div>
-
-                            {/* Payment Instructions */}
-                            {selectedPayment === 'transfer' && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
-                                >
-                                    <h2 className="text-xl font-bold text-gray-900 mb-4">Instruksi Pembayaran</h2>
-
-                                    {/* Virtual Account */}
-                                    <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl p-6 mb-6">
-                                        <div className="text-sm text-gray-600 mb-2">Nomor Virtual Account</div>
-                                        <div className="flex items-center justify-between">
-                                            <div className="text-2xl font-bold text-gray-900 tracking-wider">{vaNumber}</div>
-                                            <button
-                                                onClick={() => copyToClipboard(vaNumber)}
-                                                className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-orange-200 hover:bg-orange-50 transition-colors"
-                                            >
-                                                <Copy className="w-4 h-4" />
-                                                <span className="text-sm font-semibold">{copied ? 'Tersalin!' : 'Salin'}</span>
-                                            </button>
+                        )}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Doa / Pesan (Opsional)</label>
+                            <textarea
+                                value={donorInfo.message}
+                                onChange={(e) => setDonorInfo({ ...donorInfo, message: e.target.value })}
+                                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none h-24 resize-none"
+                                placeholder="Tuliskan doa atau harapan Anda..."
+                            />
+                        </div>
+                    </div>
+                );
+            case 2:
+                return (
+                    <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                        <div>
+                            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Transfer Bank</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {BANKS.map((bank) => (
+                                    <button
+                                        key={bank.id}
+                                        onClick={() => setSelectedPayment(bank)}
+                                        className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${selectedPayment?.id === bank.id
+                                            ? 'border-orange-500 bg-orange-50 shadow-sm'
+                                            : 'border-gray-100 hover:border-gray-300 bg-white'
+                                            }`}
+                                    >
+                                        <div className="w-12 h-8 bg-gray-100 rounded-md flex items-center justify-center font-bold text-gray-500 text-xs">
+                                            {bank.icon}
                                         </div>
-                                    </div>
-
-                                    {/* Steps */}
-                                    <div className="space-y-4">
-                                        <h3 className="font-bold text-gray-900">Cara Pembayaran:</h3>
-                                        <ol className="space-y-3 list-decimal list-inside text-gray-600">
-                                            <li>Buka aplikasi mobile banking atau ATM</li>
-                                            <li>Pilih menu Transfer ke Virtual Account</li>
-                                            <li>Masukkan nomor Virtual Account di atas</li>
-                                            <li>Masukkan nominal sesuai total pembayaran</li>
-                                            <li>Konfirmasi dan selesaikan transaksi</li>
-                                        </ol>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {selectedPayment === 'qris' && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
-                                >
-                                    <h2 className="text-xl font-bold text-gray-900 mb-4">Scan QR Code</h2>
-                                    <div className="flex justify-center p-8 bg-gray-50 rounded-xl">
-                                        <div className="w-64 h-64 bg-white border-4 border-orange-500 rounded-2xl flex items-center justify-center">
-                                            <QrCode className="w-32 h-32 text-gray-400" />
-                                        </div>
-                                    </div>
-                                    <p className="text-center text-gray-600 mt-4">
-                                        Scan QR Code dengan aplikasi e-wallet atau mobile banking Anda
-                                    </p>
-                                </motion.div>
-                            )}
+                                        <span className="font-semibold text-gray-700">{bank.name}</span>
+                                        {selectedPayment?.id === bank.id && <Check className="w-5 h-5 text-orange-500 ml-auto" />}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
-                        {/* Right Column - Help & Info */}
-                        <div className="space-y-6">
-                            <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-lg p-6 text-white">
-                                <h3 className="text-xl font-bold mb-3">Butuh Bantuan?</h3>
-                                <p className="text-orange-100 mb-4 text-sm">
-                                    Tim kami siap membantu Anda 24/7
-                                </p>
-                                <button className="w-full bg-white text-orange-600 py-3 rounded-xl font-bold hover:bg-orange-50 transition-colors">
-                                    Hubungi Customer Service
-                                </button>
-                            </div>
-
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                                <h3 className="font-bold text-gray-900 mb-3">Keamanan Terjamin</h3>
-                                <ul className="space-y-2 text-sm text-gray-600">
-                                    <li className="flex items-start gap-2">
-                                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                                        <span>Transaksi terenkripsi SSL</span>
-                                    </li>
-                                    <li className="flex items-start gap-2">
-                                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                                        <span>Data pribadi terlindungi</span>
-                                    </li>
-                                    <li className="flex items-start gap-2">
-                                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                                        <span>Lembaga resmi tersertifikasi</span>
-                                    </li>
-                                </ul>
+                        <div>
+                            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">E-Wallet & QRIS</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {EWALLETS.map((ewallet) => (
+                                    <button
+                                        key={ewallet.id}
+                                        onClick={() => setSelectedPayment(ewallet)}
+                                        className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${selectedPayment?.id === ewallet.id
+                                            ? 'border-orange-500 bg-orange-50 shadow-sm'
+                                            : 'border-gray-100 hover:border-gray-300 bg-white'
+                                            }`}
+                                    >
+                                        <div className="w-12 h-8 bg-gray-100 rounded-md flex items-center justify-center font-bold text-gray-500 text-xs">
+                                            {typeof ewallet.icon === 'string' ? ewallet.icon : ewallet.icon}
+                                        </div>
+                                        <span className="font-semibold text-gray-700">{ewallet.name}</span>
+                                        {selectedPayment?.id === ewallet.id && <Check className="w-5 h-5 text-orange-500 ml-auto" />}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
+                );
+            case 3:
+                const vaNumber = "880899283723"; // Dummy VA
+                return (
+                    <div className="space-y-8 animate-in zoom-in-95 duration-500">
+                        {/* Success Header */}
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Check className="w-8 h-8 text-green-600" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900">Instruksi Pembayaran</h3>
+                            <p className="text-gray-500">Selesaikan pembayaran Anda sebelum batas waktu berakhir</p>
+                        </div>
+
+                        {/* Timer Card */}
+                        <div className="bg-orange-600 text-white rounded-2xl p-6 flex flex-col items-center justify-center shadow-lg shadow-orange-200">
+                            <div className="flex items-center gap-2 mb-2 opacity-90">
+                                <Clock className="w-5 h-5" />
+                                <span className="text-sm font-medium">Batas Waktu Pembayaran</span>
+                            </div>
+                            <div className="text-4xl font-mono font-bold tracking-widest">
+                                {formatTime(countdown)}
+                            </div>
+                        </div>
+
+                        {/* Payment Details */}
+                        <div className="bg-white border-2 border-dashed border-gray-200 rounded-2xl p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <span className="text-gray-500">Metode Pembayaran</span>
+                                <span className="font-bold text-gray-900 flex items-center gap-2">
+                                    {selectedPayment?.name}
+                                </span>
+                            </div>
+                            <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-6">
+                                <span className="text-gray-500">Total Tagihan</span>
+                                <span className="font-bold text-orange-600 text-xl">{formatCurrency(parseInt(amount))}</span>
+                            </div>
+
+                            {selectedPayment?.id === 'qris' ? (
+                                <div className="flex flex-col items-center">
+                                    <div className="w-48 h-48 bg-white p-2 border border-gray-200 rounded-xl mb-4">
+                                        <QrCode className="w-full h-full text-gray-800" />
+                                    </div>
+                                    <p className="text-sm text-gray-500 text-center">Scan QRIS menggunakan aplikasi pembayaran favorit Anda</p>
+                                </div>
+                            ) : (
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Nomor Virtual Account / Rekening</label>
+                                    <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                        <span className="font-mono text-xl font-bold text-gray-800 tracking-wide">{vaNumber}</span>
+                                        <button
+                                            onClick={() => copyToClipboard(vaNumber)}
+                                            className="text-orange-600 hover:text-orange-700 font-medium text-sm flex items-center gap-1"
+                                        >
+                                            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                            {copied ? 'Tersalin' : 'Salin'}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="bg-blue-50 p-4 rounded-xl flex gap-3 text-blue-700 border border-blue-100">
+                            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                            <p className="text-sm leading-relaxed">
+                                Pastikan nominal transfer sesuai hingga 3 digit terakhir untuk mempercepat verifikasi otomatis.
+                            </p>
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-white">
+            <Navbar />
+
+            <main className="container mx-auto px-4 md:px-6 pt-24 pb-12 max-w-3xl">
+                {/* Header Title */}
+                <button onClick={() => navigate('/')} className="flex items-center gap-2 text-gray-500 hover:text-orange-600 transition-colors mb-6">
+                    <ArrowLeft className="w-4 h-4" />
+                    <span className="text-sm font-medium">Kembali</span>
+                </button>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Formulir Donasi</h1>
+
+                {/* Minimalist Stepper */}
+                <div className="mb-10">
+                    <div className="flex justify-between items-center relative z-10">
+                        {steps.map((label, index) => (
+                            <div key={label} className="flex flex-col items-center flex-1">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2 ${index <= activeStep
+                                    ? 'bg-orange-600 border-orange-600 text-white'
+                                    : 'bg-white border-gray-200 text-gray-400'
+                                    }`}>
+                                    {index < activeStep ? <Check className="w-5 h-5" /> : index + 1}
+                                </div>
+                                <span className={`text-xs font-semibold mt-2 hidden md:block transition-colors ${index <= activeStep ? 'text-orange-600' : 'text-gray-400'
+                                    }`}>
+                                    {label}
+                                </span>
+                            </div>
+                        ))}
+                        {/* Connecting Line */}
+                        <div className="absolute top-5 left-0 w-full h-[2px] bg-gray-100 -z-10 transform -translate-y-1/2">
+                            <div
+                                className="h-full bg-orange-600 transition-all duration-500 ease-in-out"
+                                style={{ width: `${(activeStep / (steps.length - 1)) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                    {/* Active Step Label for Mobile */}
+                    <div className="md:hidden text-center mt-4">
+                        <span className="text-sm font-bold text-orange-600">{steps[activeStep]}</span>
+                    </div>
                 </div>
-            </div>
+
+                {/* Content Card */}
+                <div className="bg-white rounded-3xl shadow-xl shadow-orange-500/5 border border-gray-100 p-6 md:p-8 min-h-[400px] flex flex-col">
+                    <div className="flex-1">
+                        {renderStepContent(activeStep)}
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <div className="flex items-center justify-between mt-10 pt-6 border-t border-gray-50">
+                        <button
+                            onClick={handleBack}
+                            disabled={activeStep === 0 || activeStep === 3}
+                            className={`px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${activeStep === 0 || activeStep === 3
+                                ? 'opacity-0 pointer-events-none'
+                                : 'text-gray-500 hover:bg-gray-50'
+                                }`}
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                            Kembali
+                        </button>
+
+                        {activeStep < 3 ? (
+                            <button
+                                onClick={handleNext}
+                                className="px-8 py-3 rounded-xl bg-orange-600 text-white font-bold text-sm hover:bg-orange-700 shadow-lg shadow-orange-500/20 flex items-center gap-2 transition-all active:scale-95 ml-auto"
+                            >
+                                {activeStep === 2 ? 'Bayar Sekarang' : 'Lanjut'}
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => navigate('/')}
+                                className="px-8 py-3 rounded-xl bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 flex items-center gap-2 transition-all ml-auto"
+                            >
+                                Selesai
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </main>
         </div>
     );
 };
