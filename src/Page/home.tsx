@@ -16,7 +16,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '../ui/Navbar';
+import CookieConsent from '../ui/CookieConsent';
 import FAQAccordion from '../ui/FAQAccordion';
+import HeroSlider from '../ui/HeroSlider';
+import AnnualRecap from '../ui/AnnualRecap';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -75,11 +78,11 @@ const Home = () => {
       <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden bg-black" id="Hero">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/50 z-10" />
+          <div className="absolute inset- z-10" />
           <div className="absolute inset-0 w-full h-full overflow-hidden">
             <iframe
               className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-60"
-              src="https://www.youtube.com/embed/_r38G3swC9o?autoplay=1&mute=1&controls=0&loop=1&playlist=_r38G3swC9o&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&modestbranding=1"
+              src="https://www.youtube.com/embed/ndTZAj9abSw?autoplay=1&mute=1&controls=0&loop=1&playlist=ndTZAj9abSw&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&modestbranding=1"
               title="Lazismu Background Video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
@@ -219,6 +222,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Hero Slider Banner */}
+      <HeroSlider />
 
       {/* Donation Campaigns (Cards) */}
       <section className="py-24 bg-white">
@@ -648,77 +654,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Laporan Tahunan / About Section */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        {/* Decorative Background */}
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-orange-50/50 skew-x-12 translate-x-32 z-0" />
-
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-orange-600 mb-8 leading-tight">
-              Laporan Tahunan Lazismu Banjarnegara<br />Tahun 2024
-            </h2>
-            <div className="w-16 h-16 mx-auto text-orange-500 animate-spin-slow">
-              <Sprout className="w-full h-full" />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border-8 border-white">
-                <img
-                  src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800"
-                  alt="Laporan Tahunan Lazismu"
-                  className="w-full h-auto"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-orange-900/80 to-transparent flex flex-col justify-end p-8">
-                  <span className="text-white/80 font-semibold mb-2 uppercase tracking-widest">Official Report</span>
-                  <h3 className="text-white text-3xl font-bold">Laporan Tahunan 2024</h3>
-                </div>
-              </div>
-              {/* Decorative Elements */}
-              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-orange-100 rounded-full -z-10" />
-              <div className="absolute -top-6 -right-6 w-24 h-24 bg-yellow-100 rounded-full -z-10" />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-1 bg-orange-500 rounded-full" />
-                <span className="text-orange-600 font-bold uppercase tracking-wider text-sm">Tentang Kami</span>
-              </div>
-
-              <h3 className="text-2xl font-bold text-gray-900">Assalamu’alaikum warahmatullahi kabarakaatuh</h3>
-
-              <p className="text-gray-600 leading-relaxed text-justify">
-                Sebagai tanggungjawab atas pendirian oleh PP. Muhammadiyah pada tahun 2002, selanjutnya dikukuhkan oleh Menteri Agama Republik Indonesia sebagai Lembaga Amil Zakat Nasional melalui SK No. 457/21 November 2002.
-              </p>
-              <p className="text-gray-600 leading-relaxed text-justify">
-                Dan saat berlakunya Undang-undang Zakat nomor 23 tahun 2011, Peraturan Pemerintah nomor 14 tahun 2014, dan Keputusan Menteri Agama Republik Indonesia nomor 333 tahun 2015. Lazismu sebagai lembaga amil zakat nasional telah dikukuhkan kembali melalui SK Mentri Agama Republik Indonesia nomor 730 tahun 2016.
-              </p>
-              <p className="text-gray-600 leading-relaxed text-justify">
-                Lazismu Banjarnegara sebagai bagian dari Lembaga Amil Zakat Infak dan Shadaqah Muhammadiyah berupaya untuk bekerja secara professional dalam menghimpun dan mengelola dana zakat, infak dan shadaqah yang diamanahkan.
-              </p>
-
-              <div className="pt-6">
-                <button className="flex items-center gap-3 text-orange-600 font-bold hover:gap-4 transition-all group">
-                  <span className="border-b-2 border-orange-600 pb-1">Download Laporan Lengkap</span>
-                  <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      {/* Laporan Tahunan - New Design */}
+      <AnnualRecap />
 
       <FAQAccordion />
 
@@ -827,6 +764,7 @@ const Home = () => {
           </div>
         </div>
       </footer>
+      <CookieConsent />
     </div>
   );
 };

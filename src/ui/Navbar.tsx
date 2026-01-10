@@ -30,6 +30,7 @@ const navItems = [
     },
     { name: 'Program', path: '/program' },
     { name: 'Kantor Layanan', path: '/kantor' },
+    { name: 'Kalkulator Zakat', path: '/kalkulator-zakat', variant: 'primary' },
 ];
 
 const Navbar = () => {
@@ -85,7 +86,15 @@ const Navbar = () => {
                                 ) : (
                                     <Link
                                         to={item.path}
-                                        className={`text-sm font-medium transition-colors ${scrolled ? 'text-gray-600 hover:text-orange-600' : 'text-white/90 hover:text-white'}`}
+                                        className={
+                                            item.variant === 'primary'
+                                                ? `px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-md transform hover:-translate-y-0.5 ${scrolled
+                                                    ? 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-500/30'
+                                                    : 'bg-white text-orange-600 hover:bg-orange-50'
+                                                }`
+                                                : `text-sm font-medium transition-colors ${scrolled ? 'text-gray-600 hover:text-orange-600' : 'text-white/90 hover:text-white'
+                                                }`
+                                        }
                                     >
                                         {item.name}
                                     </Link>
@@ -114,22 +123,19 @@ const Navbar = () => {
                     {/* CTA Buttons */}
                     <div className="flex items-center gap-4">
                         <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => {
-                                if (location.pathname === '/') {
-                                    const donationSection = document.getElementById('donasi-section');
-                                    donationSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                } else {
-                                    window.location.href = '#';
-                                }
-                            }}
-                            className={`hidden lg:flex items-center justify-between gap-3 px-2 py-2.5 rounded-full font-medium text-sm transition-all duration-300 cursor-pointer ${scrolled ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/30' : 'bg-white text-stone-600 hover:text-orange-700 hover:bg-orange-50  shadow-sm'}`}
+                            whileHover={{ width: 'auto' }}
+                            initial={{ width: '2.5rem' }}
+                            className={`hidden lg:flex items-center overflow-hidden h-10 rounded-full transition-all duration-300 ${scrolled
+                                    ? 'bg-gray-100/50 hover:bg-white text-gray-800 shadow-sm border border-transparent hover:border-orange-100 hover:shadow-md'
+                                    : 'bg-white/10 hover:bg-white text-white hover:text-orange-600 backdrop-blur-sm'
+                                }`}
                         >
-                            <div className="flex items-center gap-3 flex-1 min-w-0">
-                                <Search className={`w-6 h-4 flex-shrink-0 ${scrolled ? 'text-white' : 'text-stone-600'}`} />
-                                <input type="search" placeholder="Cari di LazisMU..." className="flex-1 min-w-0" />
+                            <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 cursor-pointer">
+                                <Search className="w-5 h-5" />
                             </div>
+                            <span className="whitespace-nowrap pr-4 text-sm font-medium opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                Cari di LazisMU...
+                            </span>
                         </motion.button>
 
                         {/* Mobile Menu Button */}
@@ -189,7 +195,10 @@ const Navbar = () => {
                                         ) : (
                                             <Link
                                                 to={item.path}
-                                                className="block text-lg font-medium text-gray-900 py-3 border-b border-gray-50 last:border-0 hover:text-orange-600"
+                                                className={`block text-lg font-medium py-3 border-b border-gray-50 last:border-0 ${item.variant === 'primary'
+                                                    ? 'text-orange-600 font-bold'
+                                                    : 'text-gray-900 hover:text-orange-600'
+                                                    }`}
                                             >
                                                 {item.name}
                                             </Link>

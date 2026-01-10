@@ -11,6 +11,7 @@ import StrukturManajemen from './Page/StrukturManajemen';
 import LaporanKeuangan from './Page/LaporanKeuangan';
 import Kantor from './Page/Kantor';
 import Berita from './Page/Berita';
+import BeritaDetail from './Page/BeritaDetail';
 import Konsultasi from './Page/Konsultasi';
 import Video from './Page/Video';
 import LaporanSemester from './Page/LaporanSemester';
@@ -37,6 +38,7 @@ function App() {
 
         {/* Info Submenu */}
         <Route path="/berita" element={<Berita />} />
+        <Route path="/berita/:slug" element={<BeritaDetail />} />
         <Route path="/konsultasi" element={<Konsultasi />} />
         <Route path="/video" element={<Video />} />
         <Route path="/laporan-semester" element={<LaporanSemester />} />
