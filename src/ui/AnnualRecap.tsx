@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, TrendingUp, Users, HeartHandshake, Award } from 'lucide-react';
 
 const cards = [
@@ -29,7 +29,7 @@ const cards = [
     },
     {
         icon: Award,
-        title: "Penghargaan",
+        title: "Pemberian Penghargaan",
         desc: "Meraih predikat WTP (Wajar Tanpa Pengecualian) dalam audit keuangan syariah tahun 2024.",
         bg: "bg-purple-50",
         color: "text-purple-600",
