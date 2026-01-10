@@ -1,18 +1,11 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Heart,
-  Users,
   Phone, Mail, MapPin, Facebook,
   Instagram, Youtube, MessageCircle,
-  CreditCard, QrCode, Banknote,
   ArrowRight,
-  BadgeCheck,
-  School,
-  HeartPulse,
-  Sprout,
   Calendar,
-  FileText,
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Navbar from '../ui/Navbar';
@@ -48,62 +41,6 @@ const Home = () => {
   });
 
   const parallaxY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const parallaxRotate = useTransform(scrollYProgress, [0, 1], [0, 10]);
-
-  // Donation form state
-  const [selectedProgram, setSelectedProgram] = useState('Peduli Lingkungan : SAMOSIR');
-  const [donationAmount, setDonationAmount] = useState('');
-  const [isAnonymous, setIsAnonymous] = useState(false);
-
-  const donationAmounts = [
-    { amount: 25000, popular: false },
-    { amount: 50000, popular: false },
-    { amount: 100000, popular: true },
-    { amount: 250000, popular: false },
-    { amount: 500000, popular: false },
-  ];
-
-  const handleQuickAmount = (amount: number) => {
-    setDonationAmount(amount.toString());
-  };
-
-  const handleDonationSubmit = () => {
-    const amount = parseInt(donationAmount);
-
-    if (!amount || amount < 10000) {
-      alert('Minimal donasi adalah Rp 10.000');
-      return;
-    }
-
-    // Navigate to payment page with donation data
-    navigate('/pembayaran', {
-      state: {
-        program: selectedProgram,
-        amount: amount,
-        isAnonymous: isAnonymous
-      }
-    });
-  };
-
-  const formatCurrency = (value: string) => {
-    // Remove non-numeric characters
-    const numericValue = value.replace(/\D/g, '');
-    return numericValue;
-  };
-
-  const displayCurrency = (value: string) => {
-    if (!value) return '';
-    const num = parseInt(value);
-    if (isNaN(num)) return '';
-    return new Intl.NumberFormat('id-ID').format(num);
-  };
-
-  // Parallax for Salurkan Donasi Section
-  const donateSectionRef = useRef(null);
-  const { scrollYProgress: donateScroll } = useScroll({
-    target: donateSectionRef,
-    offset: ["start end", "end start"]
-  });
 
   return (
     <div ref={containerRef} className="min-h-screen bg-linear-to-b from-gray-50 to-white overflow-hidden">
