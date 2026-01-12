@@ -1,10 +1,10 @@
 import { useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
-import { Users, School, HeartPulse, Sprout, ArrowUpRight, ArrowRight } from 'lucide-react';
+import { Users, School, HeartPulse, ArrowUpRight, ArrowRight } from 'lucide-react';
 
 const ImpactDashboard = () => {
     const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
+    useScroll({
         target: containerRef,
         offset: ["start end", "end start"]
     });
