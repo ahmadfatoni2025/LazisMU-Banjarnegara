@@ -76,7 +76,7 @@ const BeritaDetail = () => {
             <Navbar />
 
             {/* Breadcrumb - Clean & Simple */}
-            <div className="bg-gray-50 border-b border-gray-100 pt-32 pb-4">
+            <div className="bg-linear-to-r from-orange-50/50 via-white to-orange-50/30 border-b border-gray-100 pt-32 pb-4">
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                         <Link to="/" className="hover:text-orange-500 transition-colors">Home</Link>
@@ -165,8 +165,9 @@ const BeritaDetail = () => {
                         </div>
 
                         {/* Author Bio Box */}
-                        <div className="mt-12 bg-gray-50 rounded-xl p-8 flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
-                            <div className="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0">
+                        <div className="mt-12 bg-linear-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100 flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left relative overflow-hidden shadow-sm">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-200/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+                            <div className="w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center flex-shrink-0 border-4 border-orange-100">
                                 <User className="w-8 h-8 text-orange-500" />
                             </div>
                             <div>
@@ -198,7 +199,7 @@ const BeritaDetail = () => {
                     <div className="lg:w-[30%] space-y-10">
                         {/* Search Widget */}
                         <div className="bg-white rounded-xl">
-                            <h4 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-orange-500 pl-3">Pencarian</h4>
+                            <h4 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-orange-500 pl-3 py-1 bg-linear-to-r from-orange-50/50 to-transparent">Pencarian</h4>
                             <div className="relative">
                                 <input
                                     type="text"
@@ -213,7 +214,7 @@ const BeritaDetail = () => {
 
                         {/* Recent Posts Widget */}
                         <div>
-                            <h4 className="text-lg font-bold text-gray-900 mb-6 border-l-4 border-orange-500 pl-3">Berita Terpopuler</h4>
+                            <h4 className="text-lg font-bold text-gray-900 mb-6 border-l-4 border-orange-500 pl-3 py-1 bg-linear-to-r from-orange-50/50 to-transparent">Berita Terpopuler</h4>
                             <div className="space-y-6">
                                 {newsData.slice(0, 3).map((item) => (
                                     <Link to={`/berita/${item.id}`} key={item.id} className="flex gap-4 group cursor-pointer border-b border-gray-50 pb-4 last:border-0">
@@ -254,7 +255,7 @@ const BeritaDetail = () => {
 
                         {/* Categories Widget */}
                         <div>
-                            <h4 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-orange-500 pl-3">Kategori</h4>
+                            <h4 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-orange-500 pl-3 py-1 bg-linear-to-r from-orange-50/50 to-transparent">Kategori</h4>
                             <div className="space-y-1">
                                 {categories.map((cat, idx) => (
                                     <div key={idx} className="flex items-center justify-between group cursor-pointer p-2 hover:bg-orange-50 rounded transition-colors border-b border-gray-50 border-dashed last:border-0">

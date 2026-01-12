@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
 import { Users, School, HeartPulse, ArrowUpRight, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ImpactDashboard = () => {
     const containerRef = useRef(null);
@@ -58,8 +59,9 @@ const ImpactDashboard = () => {
     return (
         <section className="py-24 bg-white overflow-hidden relative" ref={containerRef}>
             {/* Background Decorations matching AnnualRecap */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 -z-10" />
-            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-50/50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 -z-10" />
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-100/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 -z-10" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-100/40 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 -z-10" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[300px] bg-linear-to-r from-orange-50/20 via-white to-blue-50/20 -z-20" />
 
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -86,13 +88,29 @@ const ImpactDashboard = () => {
                             </p>
 
                             <div className="flex flex-wrap gap-4 mb-12">
-                                <button className="px-8 py-4 bg-orange-600 text-white rounded-full font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20 flex items-center gap-2 group">
+                                <Link
+                                    to="/#berdonasi"
+                                    className="px-8 py-4 bg-orange-600 text-white rounded-full font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20 flex items-center gap-2 group inline-flex"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        const element = document.getElementById('berdonasi');
+                                        if (element) {
+                                            element.scrollIntoView({
+                                                behavior: 'smooth',
+                                                block: 'start'
+                                            });
+                                        }
+                                    }}
+                                >
                                     Salurkan Donasi
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </button>
-                                <button className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-bold hover:bg-gray-50 transition-colors">
+                                </Link>
+                                <Link
+                                    to="/laporan-keuangan"
+                                    className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-bold hover:bg-gray-50 transition-colors inline-block"
+                                >
                                     Lihat Detail Laporan
-                                </button>
+                                </Link>
                             </div>
                             <div className="flex flex-wrap gap-8 opacity-40 transition-all duration-500">
                                 <div className="flex items-center gap-2 font-bold text-gray-900">
@@ -135,7 +153,7 @@ const ImpactDashboard = () => {
                                 <img
                                     src={statsCard.image}
                                     alt="Impact"
-                                    className="w-full h-full object-cover opacity-0 group-hover:opacity-10 transition-opacity duration-700"
+                                    className="w-full h-full object-cover opacity-10 group-hover:opacity-30 transition-opacity duration-700"
                                 />
                             </div>
 
@@ -182,7 +200,7 @@ const ImpactDashboard = () => {
                                         <img
                                             src={card.image}
                                             alt={card.title}
-                                            className="w-full h-full object-cover opacity-0 group-hover:opacity-10 transition-opacity duration-500"
+                                            className="w-full h-full object-cover opacity-10 group-hover:opacity-30 transition-opacity duration-500"
                                         />
                                     </div>
 

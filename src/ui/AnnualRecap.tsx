@@ -50,8 +50,9 @@ const AnnualRecap = () => {
     return (
         <section className="py-24 bg-white overflow-hidden relative">
             {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 -z-10" />
-            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-50/50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 -z-10" />
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-100/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 -z-10" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-100/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 -z-10" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[300px] bg-linear-to-r from-orange-50/10 via-white to-blue-50/10 -z-20" />
 
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="flex flex-col lg:flex-row items-end justify-between gap-8 mb-12">
@@ -98,7 +99,7 @@ const AnnualRecap = () => {
                                 <img
                                     src={card.image}
                                     alt={card.title}
-                                    className="w-full h-full object-cover opacity-0 group-hover:opacity-10 transition-opacity duration-500"
+                                    className="w-full h-full object-cover opacity-10 group-hover:opacity-30 transition-opacity duration-500"
                                 />
                             </div>
 

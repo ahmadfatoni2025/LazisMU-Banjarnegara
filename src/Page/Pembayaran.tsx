@@ -52,6 +52,7 @@ const Pembayaran = () => {
         email: '',
         phone: '',
         message: '',
+        subProgram: '',
         isAnonymous: donationData?.isAnonymous || false
     });
     const [selectedPayment, setSelectedPayment] = useState<any>(null);
@@ -69,6 +70,10 @@ const Pembayaran = () => {
         if (activeStep === 0) {
             if (!donorInfo.isAnonymous && (!donorInfo.name || !donorInfo.email || !donorInfo.phone)) {
                 alert('Mohon lengkapi data diri Anda');
+                return;
+            }
+            if (!donorInfo.subProgram) {
+                alert('Mohon pilih peruntukan donasi Anda');
                 return;
             }
             if (donorInfo.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorInfo.email)) {
@@ -110,11 +115,23 @@ const Pembayaran = () => {
                         animate={{ opacity: 1, x: 0 }}
                         className="space-y-8"
                     >
-                        <div className="p-6 bg-gradient-to-br from-orange-50 to-amber-50 rounded-3xl border border-orange-100">
+                        {/* Ringkasan Donasi - Mobile Friendly Summary */}
+                        <div className="bg-orange-600 rounded-3xl p-6 text-white shadow-xl shadow-orange-200">
+                            <div className="flex justify-between items-center border-b border-white/20 pb-4 mb-4">
+                                <span className="text-orange-100 text-sm font-medium">Berdonasi Untuk:</span>
+                                <span className="font-bold tracking-tight">{donationData?.program || 'Infaq Umum'}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-orange-100 text-sm font-medium">Nominal:</span>
+                                <span className="text-2xl font-black">{formatCurrency(donationData?.amount || 0)}</span>
+                            </div>
+                        </div>
+
+                        <div className="p-6 bg-linear-to-br from-gray-50 to-white rounded-3xl border border-gray-100">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h4 className="font-bold text-gray-900 mb-1">Donasi Anonim</h4>
-                                    <p className="text-sm text-gray-500">Sembunyikan identitas Anda dari publik</p>
+                                    <p className="text-xs text-gray-500 italic">*Nama Anda akan disamarkan sebagai 'Hamba Allah'</p>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input
@@ -162,6 +179,34 @@ const Pembayaran = () => {
                                 </div>
                             </div>
                         )}
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-3">Peruntukan Donasi *</label>
+                            <select
+                                value={donorInfo.subProgram}
+                                onChange={(e) => setDonorInfo({ ...donorInfo, subProgram: e.target.value })}
+                                className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-orange-500 focus:outline-none focus:bg-white transition-all appearance-none cursor-pointer"
+                            >
+                                <option value="" disabled>Pilih Kategori Program...</option>
+                                <optgroup label="Program Pendidikan">
+                                    <option value="beasiswa">Beasiswa Mentari</option>
+                                    <option value="sarana_pend">Sarana & Prasarana Pendidikan</option>
+                                </optgroup>
+                                <optgroup label="Program Kesehatan">
+                                    <option value="layanan_kes">Layanan Kesehatan Gratis</option>
+                                    <option value="ambulans">Ambulans Gratis</option>
+                                </optgroup>
+                                <optgroup label="Program Ekonomi">
+                                    <option value="umkm">Pemberdayaan UMKM</option>
+                                    <option value="tani">Ketahanan Pangan & Peternakan</option>
+                                </optgroup>
+                                <optgroup label="Program Sosial">
+                                    <option value="kebencanaan">Respons Kebencanaan</option>
+                                    <option value="panti">Santunan Anak Yatim</option>
+                                </optgroup>
+                            </select>
+                            <p className="text-[10px] text-gray-400 mt-2 ml-1">*Pilih bagian program spesifik yang ingin Anda bantu</p>
+                        </div>
+
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-3">Doa / Pesan (Opsional)</label>
                             <textarea

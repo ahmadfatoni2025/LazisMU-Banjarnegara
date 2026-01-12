@@ -12,12 +12,12 @@ const Footer = () => {
                     {/* Brand */}
                     <div>
                         <div className="flex items-center space-x-3 mb-6">
-                            <div className="bg-emerald-500 w-10 h-10 rounded-xl flex items-center justify-center">
+                            <div className="bg-orange-500 w-10 h-10 rounded-xl flex items-center justify-center">
                                 <Heart className="w-6 h-6 text-white" />
                             </div>
                             <div>
                                 <div className="text-xl font-bold">LAZISMU</div>
-                                <div className="text-emerald-400 text-sm">Banjarnegara</div>
+                                <div className="text-orange-400 text-sm">Banjarnegara</div>
                             </div>
                         </div>
                         <p className="text-gray-400 mb-8 leading-relaxed">
@@ -62,7 +62,7 @@ const Footer = () => {
                         <h3 className="text-lg font-bold mb-6">Kontak Kami</h3>
                         <ul className="space-y-4">
                             <li className="flex items-start space-x-3">
-                                <MapPin className="w-5 h-5 text-emerald-400 mt-1" />
+                                <MapPin className="w-12 h-12 text-emerald-400 mt-1" />
                                 <span className="text-gray-400">Jl. Pemuda No.83, Kutabanjarnegara, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53418</span>
                             </li>
                             <li className="flex items-center space-x-3">
@@ -86,7 +86,7 @@ const Footer = () => {
                             <input
                                 type="email"
                                 placeholder="Email Anda"
-                                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-900 outline-none text-white"
+                                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-900 outline-none text-white"
                             />
                             <button className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-lg font-semibold transition-colors">
                                 Berlangganan

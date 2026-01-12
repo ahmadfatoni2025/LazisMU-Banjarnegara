@@ -158,12 +158,12 @@ const Donasi = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-16"
                         >
-                            <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Pilih Program Donasi</h2>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Pilih Pilar Program</h2>
                             <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">
-                                Tentukan program yang ingin Anda dukung untuk memberikan dampak maksimal bagi penerima manfaat.
+                                Fokuskan bantuan Anda pada salah satu pilar utama Lazismu untuk membantu sesama secara lebih spesifik.
                             </p>
 
-                            <div className="grid md:grid-cols-2 gap-6">
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {programs.map((program, index) => (
                                     <motion.button
                                         key={program.id}
@@ -171,32 +171,26 @@ const Donasi = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
                                         onClick={() => setSelectedProgram(program.id)}
-                                        className={`group relative p-8 rounded-[2rem] border-2 transition-all text-left overflow-hidden ${selectedProgram === program.id
+                                        className={`group relative p-6 rounded-[2rem] border-2 transition-all text-left flex flex-col items-center text-center ${selectedProgram === program.id
                                             ? 'border-orange-500 bg-white shadow-xl shadow-orange-100'
-                                            : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-lg'
+                                            : 'border-white bg-white hover:border-gray-100 hover:shadow-lg'
                                             }`}
                                     >
-                                        {/* Gradient Background on Hover */}
-                                        <div className={`absolute inset-0 bg-linear-to-br ${program.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
-
-                                        <div className="relative z-10">
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div className={`w-14 h-14 rounded-2xl bg-${program.color}-50 flex items-center justify-center text-${program.color}-600 group-hover:scale-110 transition-transform`}>
-                                                    {program.icon}
-                                                </div>
-                                                {selectedProgram === program.id && (
-                                                    <motion.div
-                                                        initial={{ scale: 0 }}
-                                                        animate={{ scale: 1 }}
-                                                        className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center"
-                                                    >
-                                                        <Check className="w-5 h-5 text-white" />
-                                                    </motion.div>
-                                                )}
-                                            </div>
-                                            <h3 className="text-xl font-bold text-gray-900 mb-2">{program.title}</h3>
-                                            <p className="text-gray-500 text-sm leading-relaxed">{program.desc}</p>
+                                        <div className={`w-16 h-16 rounded-2xl mb-4 bg-${program.color}-50 flex items-center justify-center text-${program.color}-600 group-hover:scale-110 transition-transform shadow-sm`}>
+                                            {program.icon}
                                         </div>
+                                        <h3 className="text-lg font-bold text-gray-900 mb-2">{program.title}</h3>
+                                        <p className="text-gray-400 text-xs leading-relaxed line-clamp-2">{program.desc}</p>
+
+                                        {selectedProgram === program.id && (
+                                            <motion.div
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute top-4 right-4 w-6 h-6 bg-orange-600 rounded-full flex items-center justify-center shadow-lg"
+                                            >
+                                                <Check className="w-4 h-4 text-white" />
+                                            </motion.div>
+                                        )}
                                     </motion.button>
                                 ))}
                             </div>

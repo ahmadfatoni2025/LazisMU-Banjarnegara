@@ -15,7 +15,7 @@ interface CalculationResult {
   label: string;
 }
 
-const HARGA_EMAS_PER_GRAM = 1350000;
+const HARGA_EMAS_PER_GRAM = 2631000;
 
 const DESCRIPTIONS = {
   profesi: "Zakat yang dikeluarkan dari setiap pendapatan (gaji, honorarium, upah, jasa) yang diperoleh secara rutin maupun tidak rutin.",
