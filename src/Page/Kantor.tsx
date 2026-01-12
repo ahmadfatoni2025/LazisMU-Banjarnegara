@@ -1,16 +1,27 @@
-
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { Mail, Phone, MapPin, Clock, MessageCircle, Navigation } from 'lucide-react';
+import Navbar from '../ui/Navbar';
+import Footer from '../ui/Footer';
+
+const FadeInUp = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6, delay, ease: "easeOut" }}
+        className={className}
+    >
+        {children}
+    </motion.div>
+);
 
 const Kantor = () => {
-    const navigate = useNavigate();
-
-    // Data Kantor Lazismu Banjarnegara (Real Data)
     const officeData = {
+        name: "Lazismu Banjarnegara",
         address: "Jl. Pemuda No.83, Kutabanjarnegara, Kec. Banjarnegara, Kab. Banjarnegara, Jawa Tengah 53418",
         phone: "(0286) 5962526",
-        wa: "6281234567890", // Sesuaikan dengan nomor WA admin
-        email: "lazismubanjarnegara@gmail.com", // Email dummy (bisa disesuaikan)
+        wa: "6281234567890",
+        email: "lazismubanjarnegara@gmail.com",
         hours: [
             { day: "Senin - Jumat", time: "08.00 - 16.00 WIB" },
             { day: "Sabtu", time: "08.00 - 14.00 WIB" },
@@ -18,115 +29,136 @@ const Kantor = () => {
         ]
     };
 
-    const handleBackHome = () => {
-        navigate('/');
-    };
-
     return (
-        <div className="min-h-screen bg-gray-50 font-poppins pt-24 pb-12">
-            <div className="container mx-auto px-6 max-w-7xl">
-                
-                {/* TOMBOL KEMBALI */}
-                <button 
-                    onClick={handleBackHome}
-                    className="flex items-center gap-2 text-gray-500 hover:text-orange-500 transition-colors duration-200 mb-8 font-medium text-sm group"
-                >
-                    <span className="transform group-hover:-translate-x-1 transition-transform duration-200">&#8592;</span> 
-                    Kembali ke Beranda
-                </button>
+        <div className="min-h-screen bg-gray-50/50">
+            <Navbar />
 
-                {/* HEADER */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-12"
-                >
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">Kantor Layanan</h1>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
-                        Kunjungi kantor kami untuk konsultasi zakat, layanan donasi, atau informasi program lebih lanjut.
-                    </p>
-                </motion.div>
-
-                {/* CONTENT GRID */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                    
-                    {/* KOLOM KIRI: Informasi Kantor */}
-                    <motion.div 
-                        initial={{ opacity: 0, x: -30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
-                    >
-                        <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                            <span className="text-orange-500">📍</span> Lazismu Banjarnegara
-                        </h3>
-                        
-                        {/* Alamat */}
-                        <div className="mb-6">
-                            <h4 className="font-semibold text-gray-900 mb-2">Alamat Lengkap</h4>
-                            <p className="text-gray-600 leading-relaxed">
-                                {officeData.address}
+            {/* Minimalist Page Header */}
+            <section className="pt-40 pb-20 bg-white shadow-xs">
+                <div className="container mx-auto px-6">
+                    <div className="max-w-4xl">
+                        <FadeInUp>
+                            <div className="inline-flex items-center space-x-2 bg-orange-50 border border-orange-100 text-orange-600 px-4 py-1.5 rounded-full mb-8">
+                                <span className="flex h-2 w-2 rounded-full bg-orange-500 animate-pulse"></span>
+                                <span className="text-xs font-bold tracking-widest uppercase">Kontak Kami</span>
+                            </div>
+                            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-8">
+                                Kantor <span className="text-orange-600">Layanan</span> <br /> & Lokasi
+                            </h1>
+                            <p className="text-xl text-gray-500 max-w-2xl font-light leading-relaxed">
+                                Kunjungi kantor kami untuk konsultasi zakat, penyaluran donasi langsung, atau informasi program pemberdayaan.
                             </p>
-                        </div>
-
-                        {/* Kontak */}
-                        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <h4 className="font-semibold text-gray-900 mb-2">Telepon Kantor</h4>
-                                <p className="text-gray-600">{officeData.phone}</p>
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-gray-900 mb-2">Email</h4>
-                                <p className="text-gray-600">{officeData.email}</p>
-                            </div>
-                        </div>
-
-                        {/* Jam Operasional */}
-                        <div className="mb-8">
-                            <h4 className="font-semibold text-gray-900 mb-3">Jam Operasional</h4>
-                            <div className="space-y-2">
-                                {officeData.hours.map((item, index) => (
-                                    <div key={index} className="flex justify-between text-sm border-b border-gray-50 pb-2">
-                                        <span className="text-gray-600">{item.day}</span>
-                                        <span className="font-medium text-gray-800">{item.time}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Tombol Action WA */}
-                        <a 
-                            href={`https://wa.me/${officeData.wa}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-3 rounded-xl transition-all shadow-lg hover:shadow-green-200"
-                        >
-                            Hubungi via WhatsApp
-                        </a>
-                    </motion.div>
-
-                    {/* KOLOM KANAN: Maps Embed */}
-                    <motion.div 
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="bg-gray-200 rounded-2xl overflow-hidden shadow-md h-[500px] relative"
-                    >
-                        {/* Google Maps Iframe */}
-                        <iframe 
-                            title="Peta Lazismu Banjarnegara"
-                            width="100%" 
-                            height="100%" 
-                            style={{ border: 0 }} 
-                            loading="lazy" 
-                            allowFullScreen
-                            referrerPolicy="no-referrer-when-downgrade"
-                            // URL Embed Otomatis ke Alamat Lazismu Banjarnegara
-                            src="https://maps.google.com/maps?q=Lazismu+Banjarnegara,+Jl.+Pemuda+No.83&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                        ></iframe>
-                    </motion.div>
+                        </FadeInUp>
+                    </div>
                 </div>
-            </div>
+            </section>
+
+            <section className="py-24">
+                <div className="container mx-auto px-6 max-w-7xl">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+
+                        {/* Info Column */}
+                        <div className="lg:col-span-6 space-y-12">
+                            <FadeInUp>
+                                <h2 className="text-4xl font-bold text-gray-900 mb-8 tracking-tight">{officeData.name}</h2>
+                                <p className="text-gray-500 leading-relaxed text-lg font-light mb-12">
+                                    Pusat koordinasi pengelolaan dana ZISKA di wilayah Banjarnegara. Kami melayani dengan sepenuh hati demi kemaslahatan umat.
+                                </p>
+                            </FadeInUp>
+
+                            <div className="grid gap-6">
+                                <FadeInUp delay={0.1}>
+                                    <div className="flex gap-8 p-8 bg-white rounded-[2.5rem] border border-gray-100 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-500/5 transition-all group">
+                                        <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0 shadow-xs group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
+                                            <MapPin className="w-7 h-7" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Alamat Utama</h4>
+                                            <p className="text-gray-900 font-medium leading-relaxed">{officeData.address}</p>
+                                        </div>
+                                    </div>
+                                </FadeInUp>
+
+                                <FadeInUp delay={0.2}>
+                                    <div className="flex gap-8 p-8 bg-white rounded-[2.5rem] border border-gray-100 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-500/5 transition-all group text-balance">
+                                        <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0 shadow-xs group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
+                                            <Phone className="w-7 h-7" />
+                                        </div>
+                                        <div className="grid sm:grid-cols-2 gap-8 w-full">
+                                            <div>
+                                                <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Telepon</h4>
+                                                <p className="text-gray-900 font-bold text-lg">{officeData.phone}</p>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Email</h4>
+                                                <p className="text-gray-900 font-medium truncate">{officeData.email}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </FadeInUp>
+
+                                <FadeInUp delay={0.3}>
+                                    <div className="flex gap-8 p-8 bg-white rounded-[2.5rem] border border-gray-100 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-500/5 transition-all group">
+                                        <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0 shadow-xs group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
+                                            <Clock className="w-7 h-7" />
+                                        </div>
+                                        <div className="w-full">
+                                            <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Jam Layanan</h4>
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                {officeData.hours.map((item, index) => (
+                                                    <div key={index}>
+                                                        <p className="text-xs font-bold text-gray-900 tracking-tight">{item.day}</p>
+                                                        <p className="text-sm text-gray-500 font-light">{item.time}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </FadeInUp>
+                            </div>
+
+                            <FadeInUp delay={0.4} className="flex flex-col sm:flex-row gap-4 pt-4">
+                                <a
+                                    href={`https://wa.me/${officeData.wa}`}
+                                    className="px-10 py-5 bg-emerald-500 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-emerald-600 shadow-xl shadow-emerald-500/20 active:scale-95 transition-all"
+                                >
+                                    <MessageCircle className="w-6 h-6" /> Hubungi WhatsApp
+                                </a>
+                                <a
+                                    href={`https://www.google.com/maps/dir/?api=1&destination=Lazismu+Banjarnegara`}
+                                    className="px-10 py-5 bg-gray-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-orange-600 shadow-xl shadow-gray-950/20 active:scale-95 transition-all"
+                                >
+                                    <Navigation className="w-6 h-6" /> Petunjuk Arah
+                                </a>
+                            </FadeInUp>
+                        </div>
+
+                        {/* Map Column */}
+                        <div className="lg:col-span-6">
+                            <FadeInUp delay={0.4} className="relative">
+                                <div className="bg-white rounded-[3rem] overflow-hidden shadow-2xl h-[700px] border-8 border-white group">
+                                    <iframe
+                                        title="Peta Lazismu Banjarnegara"
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        loading="lazy"
+                                        allowFullScreen
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        src="https://maps.google.com/maps?q=Lazismu+Banjarnegara,+Jl.+Pemuda+No.83&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                                        className="grayscale-[0.2] contrast-[1.1] transition-all hover:grayscale-0"
+                                    ></iframe>
+                                    <div className="absolute inset-x-0 bottom-0 p-8 bg-linear-to-t from-black/20 to-transparent pointer-events-none" />
+                                </div>
+                                {/* Accent Decoration */}
+                                <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-orange-600 rounded-full blur-3xl opacity-10 -z-10" />
+                            </FadeInUp>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <Footer />
         </div>
     );
 };

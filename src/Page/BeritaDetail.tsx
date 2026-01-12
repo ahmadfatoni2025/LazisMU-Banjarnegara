@@ -72,7 +72,7 @@ const BeritaDetail = () => {
     if (!newsItem) return <div>Loading...</div>;
 
     return (
-        <div className="min-h-screen bg-white font-sans text-gray-800">
+        <div className="min-h-screen bg-white text-gray-800">
             <Navbar />
 
             {/* Breadcrumb - Clean & Simple */}

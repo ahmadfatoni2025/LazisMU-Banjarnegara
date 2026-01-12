@@ -94,18 +94,26 @@ const ImpactDashboard = () => {
                                     Lihat Detail Laporan
                                 </button>
                             </div>
-
-                            <div className="pt-8 border-t border-gray-100">
-                                <p className="text-sm text-gray-400 font-semibold uppercase tracking-wider mb-6">Didukung oleh mitra terpercaya</p>
-                                <div className="flex flex-wrap gap-8 opacity-40 grayscale group hover:grayscale-0 transition-all duration-500">
-                                    <div className="flex items-center gap-2 font-bold text-gray-900">
-                                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px]">M</div>
-                                        MUHAMMADIYAH
+                            <div className="flex flex-wrap gap-8 opacity-40 transition-all duration-500">
+                                <div className="flex items-center gap-2 font-bold text-gray-900">
+                                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                                        <img
+                                            src="https://muhammadiyah.or.id/wp-content/uploads/2025/05/Lazismu-Luncurkan-Gerakan-Zakat-Nasional-untuk-Pendidikan.jpeg"
+                                            className="w-full h-full object-cover"
+                                            alt="Muhammadiyah Logo"
+                                        />
                                     </div>
-                                    <div className="flex items-center gap-2 font-bold text-gray-900">
-                                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-[10px]">L</div>
-                                        LAZISMU
+                                    MUHAMMADIYAH
+                                </div>
+                                <div className="flex items-center gap-2 font-bold text-gray-900">
+                                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center overflow-hidden">
+                                        <img
+                                            src="https://muhammadiyah.or.id/wp-content/uploads/2025/05/Lazismu-Luncurkan-Gerakan-Zakat-Nasional-untuk-Pendidikan.jpeg"
+                                            className="w-full h-full object-cover"
+                                            alt="Lazismu Logo"
+                                        />
                                     </div>
+                                    LAZISMU
                                 </div>
                             </div>
                         </motion.div>

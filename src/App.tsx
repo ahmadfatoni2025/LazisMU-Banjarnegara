@@ -16,6 +16,7 @@ import Konsultasi from './Page/Konsultasi';
 import Video from './Page/Video';
 import LaporanSemester from './Page/LaporanSemester';
 import DokumentasiBulanan from './Page/DokumentasiBulanan';
+import Donasi from './Page/Donasi';
 import Pembayaran from './Page/Pembayaran';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
         <Route path="/dokumentasi-bulanan" element={<DokumentasiBulanan />} />
 
         {/* Donation Flow */}
+        <Route path="/donasi" element={<Donasi />} />
         <Route path="/pembayaran" element={<Pembayaran />} />
       </Routes>
     </Router>

@@ -1,6 +1,19 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { User, Calendar, ArrowRight, Search, Phone, Instagram, Facebook, Youtube, Twitter } from 'lucide-react';
 import Navbar from '../ui/Navbar';
+
+const FadeInUp = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6, delay, ease: "easeOut" }}
+        className={className}
+    >
+        {children}
+    </motion.div>
+);
 
 const Berita = () => {
     const newsData = [
@@ -69,70 +82,63 @@ const Berita = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-white font-sans text-gray-800">
+        <div className="min-h-screen bg-white text-gray-800">
             <Navbar />
-
-            {/* Breadcrumb Section */}
-            <div className="bg-gray-50 border-b border-gray-100 pt-32 pb-8">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                        <span className="hover:text-orange-500 cursor-pointer transition-colors">Lazismu Banjarnegara</span>
-                        <span className="text-gray-300">/</span>
-                        <span className="text-gray-800">Berita</span>
-                    </div>
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900">
-                        Berita Terbaru
-                    </h1>
-                </div>
-            </div>
-
-            <div className="container mx-auto px-4 lg:px-8 py-12">
+            <div className="container mx-auto px-4 lg:px-8 py-34">
                 <div className="flex flex-col lg:flex-row gap-12">
-
-                    {/* Main Content - News Grid */}
                     <div className="lg:w-[70%]">
-                        <div className="grid md:grid-cols-2 gap-x-8 gap-y-10">
-                            {newsData.map((news) => (
-                                <div key={news.id} className="group flex flex-col h-full bg-transparent">
-                                    {/* Image Wrapper */}
-                                    <div className="relative overflow-hidden rounded-xl aspect-[16/10] mb-4 bg-gray-100">
-                                        <img
-                                            src={news.image}
-                                            alt={news.title}
-                                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
-                                        />
-                                        <div className="absolute top-4 left-4">
-                                            <span className="bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded shadow-sm uppercase tracking-wider">
-                                                {news.category}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex flex-col flex-grow">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2">
-                                            <Link to={`/berita/${news.id}`}>{news.title}</Link>
-                                        </h3>
-                                        <p className="text-[15px] leading-relaxed text-gray-600 mb-4 line-clamp-3 text-justify">
-                                            {news.excerpt}
-                                        </p>
-
-                                        <div className="flex items-center justify-between text-xs text-gray-400 font-semibold mt-auto pt-2">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                                                    <User className="w-3 h-3" />
+                        <FadeInUp>
+                            <div className="grid md:grid-cols-2 gap-x-12 gap-y-16">
+                                {newsData.map((news, index) => (
+                                    <FadeInUp key={news.id} delay={index * 0.1}>
+                                        <div className="group flex flex-col h-full bg-transparent">
+                                            <div className="relative overflow-hidden rounded-[2rem] aspect-[16/11] mb-8 bg-gray-100 shadow-sm transition-all group-hover:shadow-2xl group-hover:shadow-orange-500/5">
+                                                <img
+                                                    src={news.image}
+                                                    alt={news.title}
+                                                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out grayscale-[0.2] group-hover:grayscale-0"
+                                                />
+                                                <div className="absolute top-6 left-6">
+                                                    <span className="bg-white/90 backdrop-blur-md text-orange-600 text-[10px] font-bold px-4 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-orange-100">
+                                                        {news.category}
+                                                    </span>
                                                 </div>
-                                                <span className="uppercase tracking-wide text-[10px]">BY {news.author}</span>
                                             </div>
-                                            <div className="flex items-center gap-1">
-                                                <Calendar className="w-3 h-3" />
-                                                <span>{news.date}</span>
+
+                                            {/* Content */}
+                                            <div className="flex flex-col flex-grow px-2">
+                                                <div className="flex items-center gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
+                                                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                                                        <Calendar className="w-3.5 h-3.5" />
+                                                        <span>{news.date}</span>
+                                                    </div>
+                                                </div>
+
+                                                <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight group-hover:text-orange-600 transition-colors tracking-tight line-clamp-2">
+                                                    <Link to={`/berita/${news.id}`}>{news.title}</Link>
+                                                </h3>
+
+                                                <p className="text-gray-500 mb-8 font-light leading-relaxed line-clamp-3">
+                                                    {news.excerpt}
+                                                </p>
+
+                                                <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
+                                                    <Link to={`/berita/${news.id}`} className="text-[10px] font-bold text-orange-600 uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all">
+                                                        Selengkapnya <ArrowRight className="w-4 h-4" />
+                                                    </Link>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-orange-600 transition-colors">
+                                                            <User className="w-3 h-3" />
+                                                        </div>
+                                                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">{news.author}</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                                    </FadeInUp>
+                                ))}
+                            </div>
+                        </FadeInUp>
 
                         {/* Pagination */}
                         <div className="mt-16 text-center">
@@ -185,24 +191,6 @@ const Berita = () => {
                                         </div>
                                     </div>
                                 ))}
-                            </div>
-                        </div>
-
-                        {/* Help Banner Widget */}
-                        <div className="relative rounded-2xl overflow-hidden group shadow-lg">
-                            <div className="absolute inset-0 bg-gray-900/20 group-hover:bg-gray-900/10 transition-colors z-10"></div>
-                            <img
-                                src="https://lazismubanjarnegara.org/wp-content/uploads/2024/05/bg-donasi.jpg"
-                                alt="Donasi"
-                                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
-                            />
-                            <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-                                <h4 className="text-xl font-bold text-white mb-2">Butuh Bantuan?</h4>
-                                <p className="text-xs text-gray-300 mb-4 leading-relaxed">Salurkan donasi terbaik anda melalui Lazismu Kantor Layanan Banjarnegara.</p>
-                                <button className="w-full bg-orange-600 hover:bg-orange-500 text-white py-3 rounded font-bold text-sm transition-colors flex items-center justify-center gap-2 uppercase tracking-wide">
-                                    <Phone className="w-3 h-3" />
-                                    Hubungi Kami
-                                </button>
                             </div>
                         </div>
 
