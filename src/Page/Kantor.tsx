@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Clock, MessageCircle, Navigation } from 'lucide-react';
+import { Phone, MapPin, Clock, MessageCircle, Navigation } from 'lucide-react';
 import Navbar from '../ui/Navbar';
 import Footer from '../ui/Footer';
 

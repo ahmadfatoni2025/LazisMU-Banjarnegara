@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import Navbar from '../ui/Navbar';
 import Footer from '../ui/Footer';
 import {
-    CheckCircle2,
     ShieldCheck,
     Heart,
     Target,

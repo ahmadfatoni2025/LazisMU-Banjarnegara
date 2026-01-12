@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Navbar from '../ui/Navbar';
 import Footer from '../ui/Footer';
-import { User, Briefcase, Mail, CheckCircle2 } from 'lucide-react';
+import { User, Mail, CheckCircle2 } from 'lucide-react';
 
 const FadeInUp = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
     <motion.div

@@ -1,7 +1,6 @@
 import { useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
-  ArrowRight,
   Calendar,
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -11,7 +10,6 @@ import CookieConsent from '../ui/CookieConsent';
 import FAQAccordion from '../ui/FAQAccordion';
 import HeroSlider from '../ui/HeroSlider';
 import AnnualRecap from '../ui/AnnualRecap';
-import CampaignCard from '../ui/CampaignCard';
 import ImpactDashboard from '../ui/ImpactDashboard';
 import backgroundVideo from '../assets/Backgroundvideo.mp4';
 import Berdonasi from './Berdonasi';
@@ -30,7 +28,6 @@ const FadeInUp = ({ children, delay = 0, className = "" }: { children: React.Rea
 );
 
 const Home = () => {
-  const navigate = useNavigate();
   const containerRef = useRef(null);
 
   // Parallax Hooks

@@ -1,5 +1,4 @@
 import { ArrowRight } from 'lucide-react';
-import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import FadeInUp from '../ui/FadeInUp';
 import CampaignCard from '../ui/CampaignCard';

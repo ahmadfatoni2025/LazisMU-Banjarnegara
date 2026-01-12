@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Calendar, ArrowRight, Search, Phone, Instagram, Facebook, Youtube, Twitter } from 'lucide-react';
+import { User, Calendar, ArrowRight, Search, Instagram, Facebook, Youtube, Twitter } from 'lucide-react';
 import Navbar from '../ui/Navbar';
 
 const FadeInUp = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (

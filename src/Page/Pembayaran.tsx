@@ -7,7 +7,6 @@ import {
     QrCode,
     Copy,
     Clock,
-    AlertCircle,
     CreditCard,
     Wallet,
     Smartphone,
@@ -192,8 +191,8 @@ const Pembayaran = () => {
                                         key={bank.id}
                                         onClick={() => setSelectedPayment(bank)}
                                         className={`group relative p-5 rounded-2xl border-2 transition-all text-left overflow-hidden ${selectedPayment?.id === bank.id
-                                                ? 'border-orange-500 bg-orange-50 shadow-lg shadow-orange-100'
-                                                : 'border-gray-100 hover:border-gray-200 bg-white hover:shadow-md'
+                                            ? 'border-orange-500 bg-orange-50 shadow-lg shadow-orange-100'
+                                            : 'border-gray-100 hover:border-gray-200 bg-white hover:shadow-md'
                                             }`}
                                     >
                                         <div className="flex items-center gap-4">
@@ -224,8 +223,8 @@ const Pembayaran = () => {
                                         key={ewallet.id}
                                         onClick={() => setSelectedPayment(ewallet)}
                                         className={`group relative p-5 rounded-2xl border-2 transition-all text-left overflow-hidden ${selectedPayment?.id === ewallet.id
-                                                ? 'border-orange-500 bg-orange-50 shadow-lg shadow-orange-100'
-                                                : 'border-gray-100 hover:border-gray-200 bg-white hover:shadow-md'
+                                            ? 'border-orange-500 bg-orange-50 shadow-lg shadow-orange-100'
+                                            : 'border-gray-100 hover:border-gray-200 bg-white hover:shadow-md'
                                             }`}
                                     >
                                         <div className="flex items-center gap-4">
@@ -352,8 +351,8 @@ const Pembayaran = () => {
                         {steps.map((label, index) => (
                             <div key={label} className="flex flex-col items-center flex-1 relative z-10">
                                 <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition-all duration-500 border-4 ${index <= activeStep
-                                        ? 'bg-orange-600 border-orange-600 text-white shadow-lg shadow-orange-200'
-                                        : 'bg-white border-gray-200 text-gray-400'
+                                    ? 'bg-orange-600 border-orange-600 text-white shadow-lg shadow-orange-200'
+                                    : 'bg-white border-gray-200 text-gray-400'
                                     }`}>
                                     {index < activeStep ? <Check className="w-6 h-6" /> : index + 1}
                                 </div>
