@@ -93,15 +93,19 @@ const Navbar = () => {
                     {/* Desktop Navigation - Centered */}
                     <nav className="hidden lg:flex items-center justify-center gap-6 flex-1">
                         {navItems.map((item) => (
-                            <div key={item.name} className="relative group">
+                            <div
+                                key={item.name}
+                                className="relative"
+                                onMouseEnter={() => item.children && setActiveDropdown(item.name)}
+                                onMouseLeave={() => item.children && setActiveDropdown(null)}
+                            >
                                 {item.children ? (
                                     <button
-                                        className={`flex items-center gap-1 text-sm font-medium transition-colors ${isScrolled ? 'text-gray-600 hover:text-orange-600' : 'text-white/90 hover:text-white'}`}
-                                        onMouseEnter={() => setActiveDropdown(item.name)}
+                                        className={`flex items-center gap-1 text-sm font-medium transition-colors ${isScrolled ? 'text-gray-600 hover:text-orange-600' : 'text-white/90 hover:text-white'} ${activeDropdown === item.name ? 'text-orange-600' : ''}`}
                                         onClick={() => setActiveDropdown(activeDropdown === item.name ? null : item.name)}
                                     >
                                         {item.name}
-                                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isScrolled ? '' : 'text-white/70'} group-hover:rotate-180`} />
+                                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isScrolled ? '' : 'text-white/70'} ${activeDropdown === item.name ? 'rotate-180 text-orange-600' : ''}`} />
                                     </button>
                                 ) : (
                                     <Link
@@ -114,21 +118,30 @@ const Navbar = () => {
                                 )}
 
                                 {/* Dropdown Menu */}
-                                {item.children && (
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 min-w-[240px] z-50">
-                                        <div className="bg-white rounded-xl shadow-xl shadow-orange-500/10 border border-gray-100 overflow-hidden py-2">
-                                            {item.children.map((child) => (
-                                                <Link
-                                                    key={child.name}
-                                                    to={child.path}
-                                                    className="block px-4 py-2.5 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50 font-medium transition-colors text-center"
-                                                >
-                                                    {child.name}
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                <AnimatePresence>
+                                    {item.children && activeDropdown === item.name && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, x: '-50%' }}
+                                            animate={{ opacity: 1, y: 0, x: '-50%' }}
+                                            exit={{ opacity: 0, y: 10, x: '-50%' }}
+                                            transition={{ duration: 0.2 }}
+                                            className="absolute top-full left-1/2 pt-4 min-w-[240px] z-50"
+                                        >
+                                            <div className="bg-white rounded-xl shadow-xl shadow-orange-500/10 border border-gray-100 overflow-hidden py-2 cursor-default">
+                                                {item.children.map((child) => (
+                                                    <Link
+                                                        key={child.name}
+                                                        to={child.path}
+                                                        className="block px-4 py-2.5 text-sm text-gray-600 hover:text-orange-600 hover:bg-orange-50 font-medium transition-colors text-center"
+                                                        onClick={() => setActiveDropdown(null)}
+                                                    >
+                                                        {child.name}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
                         ))}
                     </nav>
