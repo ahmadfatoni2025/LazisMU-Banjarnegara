@@ -97,7 +97,7 @@ const FAQAccordion = () => {
                             <h4 className="text-2xl md:text-3xl font-black text-gray-900 mb-2">Masih punya pertanyaan?</h4>
                             <p className="text-gray-500 text-lg">Tim kami siap membantu Anda 24/7 melalui layanan WhatsApp.</p>
                         </div>
-                        <a href="https://wa.me/628123456789" className="group relative px-10 py-5 bg-gray-900 text-white rounded-4xl font-bold flex items-center gap-3 overflow-hidden transition-all hover:scale-105 hover:bg-orange-600">
+                        <a href="https://wa.me/6281393024399" className="group relative px-10 py-5 bg-gray-900 text-white rounded-4xl font-bold flex items-center gap-3 overflow-hidden transition-all hover:scale-105 hover:bg-orange-600">
                             <MessageCircle className="w-6 h-6" />
                             <span>Hubungi Sekarang</span>
                         </a>
