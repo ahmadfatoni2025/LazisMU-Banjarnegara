@@ -16,6 +16,8 @@ import Program from './Page/Program';
 import KalkulatorZakat from './Page/KalkulatorZakat';
 import Donasi from './Page/Donasi';
 import Pembayaran from './Page/Pembayaran';
+import Login from './Page/Login';
+import BuatBerita from './Page/BuatBerita';
 import ScrollToTop from './ui/ScrollToTop';
 
 function App() {
@@ -35,11 +37,13 @@ function App() {
                 {/* Info Routes */}
                 <Route path="/artikel" element={<Artikel />} />
                 <Route path="/berita" element={<Berita />} />
+                <Route path="/buat-berita" element={<BuatBerita />} />
                 <Route path="/berita/:slug" element={<BeritaDetail />} />
                 <Route path="/konsultasi" element={<Konsultasi />} />
                 <Route path="/video" element={<Video />} />
                 <Route path="/laporan-semester" element={<LaporanSemester />} />
                 <Route path="/dokumentasi-bulanan" element={<DokumentasiBulanan />} />
+                <Route path="/login" element={<Login />} />
 
                 {/* Other Main Routes */}
                 <Route path="/program" element={<Program />} />

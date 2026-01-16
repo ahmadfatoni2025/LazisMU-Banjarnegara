@@ -1,281 +1,256 @@
 import { useParams, Link } from 'react-router-dom';
-import { User, Calendar, Search, Phone, Instagram, Facebook, Twitter, Tag, Eye } from 'lucide-react';
+import { User, Calendar, Search, Phone, Instagram, Facebook, Twitter, Tag, Eye, Clock, Share2, Bookmark, ChevronRight, FileText } from 'lucide-react';
 import Navbar from '../ui/Navbar';
+import Footer from '../ui/Footer';
 import { useState, useEffect } from 'react';
-
-// Mock data shared with Berita.tsx (In a real app, this would be in a separate file or API)
-const newsData = [
-    {
-        id: 1,
-        slug: "tim-sar-muhammadiyah-cari-korban-longsor",
-        title: "Tim SAR Muhammadiyah Beserta SAR Gabungan Terus Berupaya Mencari Korban Longsor",
-        date: "Januari 24, 2025",
-        author: "Administrator",
-        image: "https://images.unsplash.com/photo-1599930113854-d6d7fd521f10?auto=format&fit=crop&q=80&w=800",
-        excerpt: "Proses pencarian korban longsor di Desa Kasimpar, Kecamatan Petungkriyono terus dilakukan dengan intensif...",
-        content: `
-            <p><strong>PEKALONGAN</strong> – Tim SAR Muhammadiyah (MDMC) bersama dengan tim SAR gabungan terus melakukan upaya pencarian korban bencana tanah longsor yang terjadi di Desa Kasimpar, Kecamatan Petungkriyono, Kabupaten Pekalongan. Hingga hari ketiga pencarian, tim masih berfokus pada titik-titik yang diduga menjadi lokasi tertimbunnya korban.</p>
-            
-            <p>Koordinator lapangan MDMC Jawa Tengah, dalam keterangan persnya menyatakan bahwa kondisi medan yang terjal dan cuaca yang tidak menentu menjadi kendala utama dalam proses pencarian. "Kami mengerahkan seluruh potensi yang ada, termasuk relawan dari berbagai daerah terdekat untuk membantu proses evakuasi," ujarnya.</p>
-
-            <p>Bencana longsor ini dipicu oleh curah hujan tinggi yang mengguyur wilayah pegunungan tersebut selama tiga hari berturut-turut. Selain menimbun beberapa rumah warga, longsor juga memutus akses jalan utama desa, sehingga menyulitkan distribusi bantuan logistik.</p>
-
-            <h3>Respon Cepat Lazismu</h3>
-            <p>Sementara itu, Lazismu Pekalongan telah mendirikan dapur umum dan posko kesehatan tak jauh dari lokasi kejadian. Bantuan logistik berupa makanan siap saji, selimut, dan obat-obatan telah didistribusikan kepada warga yang terdampak dan mengungsi di tempat yang lebih aman.</p>
-
-            <blockquote class="italic border-l-4 border-orange-500 pl-4 py-2 my-4 bg-gray-50 text-gray-700">
-                "Kami mengajak seluruh masyarakat untuk turut mendoakan agar proses pencarian berjalan lancar dan para relawan senantiasa diberikan kesehatan serta keselamatan dalam menjalankan tugas kemanusiaan ini."
-            </blockquote>
-
-            <p>Pencarian akan terus dilakukan hingga batas waktu tanggap darurat yang ditentukan oleh pemerintah daerah setempat. Masyarakat dihimbau untuk tetap waspada terhadap potensi longsor susulan mengingat curah hujan yang masih cukup tinggi.</p>
-        `,
-        category: "Bencana",
-        tags: ["Bencana Alam", "Longsor", "MDMC", "Relawan"]
-    },
-    {
-        id: 2,
-        slug: "situation-report-bencana-banjarnegara",
-        title: "SITUATION REPORT: Bencana Alam Banjarnegara",
-        date: "Januari 23, 2025",
-        author: "Administrator",
-        image: "https://lazismubanjarnegara.org/wp-content/uploads/2025/01/df9a9c3d-4bc6-4cc3-9cd9-7a3fe254917e.jpg",
-        excerpt: "Dampak bencana tanah longsor dan banjir di Kecamatan Kalibening menjadi perhatian utama tim respon cepat...",
-        content: "<p>Konten lengkap laporan situasi bencana alam di Banjarnegara...</p>",
-        category: "Laporan",
-        tags: ["Sitrep", "Bencana", "Banjarnegara"]
-    },
-    // ... add more mock data as needed to match existing IDs if necessary
-];
-
-const categories = [
-    { name: "Berita", count: 12 },
-    { name: "Artikel", count: 5 },
-    { name: "Program", count: 8 },
-    { name: "Laporan", count: 3 },
-    { name: "Video", count: 4 },
-];
+import { motion } from 'framer-motion';
 
 const BeritaDetail = () => {
     const { slug } = useParams();
-    const [newsItem, setNewsItem] = useState(newsData[0]); // Default to first item if not found
+    const [newsItem, setNewsItem] = useState<any>(null);
+    const [relatedNews, setRelatedNews] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Find news item by ID or Slug (using logic for demo purposes)
-        // In a real app, fetch from API based on slug
-        const found = newsData.find(n => n.slug === slug || n.id.toString() === slug);
-        if (found) {
-            setNewsItem(found);
-        }
+        const fetchDetail = async () => {
+            try {
+                const token = localStorage.getItem('admin_token');
+                const headers: any = {};
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                const response = await fetch(`http://localhost:3000/api/berita`, { headers });
+                const allNews = await response.json();
+
+                const currentId = parseInt(slug || '0');
+                const found = allNews.find((n: any) => n.id === currentId);
+
+                if (found) {
+                    setNewsItem(found);
+                    setRelatedNews(allNews.filter((n: any) => n.id !== currentId).slice(0, 3));
+                }
+            } catch (error) {
+                console.error('Error fetching detail:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchDetail();
         window.scrollTo(0, 0);
     }, [slug]);
 
-    if (!newsItem) return <div>Loading...</div>;
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center bg-white">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-gray-100 border-t-orange-600 rounded-full animate-spin"></div>
+                <p className="text-gray-400 font-medium text-sm tracking-wide animate-pulse">Memuat konten...</p>
+            </div>
+        </div>
+    );
+
+    if (!newsItem) return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+            <div className="text-center">
+                <h2 className="text-6xl font-black text-gray-200 mb-2">404</h2>
+                <p className="text-gray-900 font-bold text-xl mb-8">Berita tidak ditemukan.</p>
+                <Link to="/berita" className="px-8 py-3 bg-gray-900 text-white rounded-full font-bold hover:bg-black transition-all hover:px-10 duration-300">
+                    Kembali ke Berita
+                </Link>
+            </div>
+        </div>
+    );
+
+    const formatDate = (dateStr: string) => {
+        return new Date(dateStr).toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
 
     return (
-        <div className="min-h-screen bg-white text-gray-800">
+        <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-orange-100 selection:text-orange-900">
             <Navbar />
 
-            {/* Breadcrumb - Clean & Simple */}
-            <div className="bg-linear-to-r from-orange-50/50 via-white to-orange-50/30 border-b border-gray-100 pt-32 pb-4">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                        <Link to="/" className="hover:text-orange-500 transition-colors">Home</Link>
-                        <span className="text-gray-300">/</span>
-                        <Link to="/berita" className="hover:text-orange-500 transition-colors">Berita</Link>
-                        <span className="text-gray-300">/</span>
-                        <span className="text-gray-400">{newsItem.category}</span>
-                        <span className="text-gray-300">/</span>
-                        <span className="text-gray-800 line-clamp-1 max-w-[200px] md:max-w-none">{newsItem.title}</span>
-                    </div>
-                </div>
-            </div>
+            <div className="pt-32 pb-24">
+                <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
 
-            <div className="container mx-auto px-4 lg:px-8 py-8 md:py-12">
-                <div className="flex flex-col lg:flex-row gap-12">
+                    {/* Breadcrumbs - Minimalist */}
+                    <nav className="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest mb-12">
+                        <Link to="/" className="hover:text-orange-600 transition-colors">Home</Link>
+                        <ChevronRight className="w-3 h-3 text-gray-300" />
+                        <Link to="/berita" className="hover:text-orange-600 transition-colors">Berita</Link>
+                        <ChevronRight className="w-3 h-3 text-gray-300" />
+                        <span className="text-gray-900 line-clamp-1 border-b-2 border-orange-500 pb-0.5">{newsItem.title}</span>
+                    </nav>
 
-                    {/* Main Content Article */}
-                    <div className="lg:w-[70%]">
-                        {/* Article Header */}
-                        <div className="mb-8">
-                            <span className="inline-block bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded shadow-sm uppercase tracking-wider mb-4">
-                                {newsItem.category}
-                            </span>
-                            <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-6">
-                                {newsItem.title}
-                            </h1>
+                    <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
 
-                            {/* Meta Data Row */}
-                            <div className="flex items-center flex-wrap gap-4 md:gap-6 border-b border-gray-100 pb-6 mb-8">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
-                                        <User className="w-5 h-5" />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Penulis</span>
-                                        <span className="text-xs font-bold text-gray-800 uppercase">{newsItem.author}</span>
-                                    </div>
-                                </div>
-                                <div className="w-px h-8 bg-gray-100 hidden md:block"></div>
-                                <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                                    <Calendar className="w-4 h-4 text-orange-400" />
-                                    <span>{newsItem.date}</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wide ml-auto">
-                                    <Eye className="w-4 h-4 text-gray-300" />
-                                    <span>1.2K Views</span>
-                                </div>
-                            </div>
+                        {/* Main Content Column */}
+                        <div className="lg:w-[60%]">
 
-                            {/* Social Share Top */}
-                            <div className="flex items-center gap-2 mb-8">
-                                <span className="text-xs font-bold text-gray-400 uppercase mr-2">Share:</span>
-                                {[Facebook, Twitter, Instagram].map((Icon, i) => (
-                                    <button key={i} className="w-8 h-8 rounded-full bg-blue-50 hover:bg-orange-500 text-blue-600 hover:text-white flex items-center justify-center transition-all duration-300">
-                                        <Icon className="w-4 h-4" />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Featured Image */}
-                        <div className="relative rounded-2xl overflow-hidden shadow-lg mb-10 group">
-                            <img
-                                src={newsItem.image}
-                                alt={newsItem.title}
-                                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
-                            />
-                        </div>
-
-                        {/* Article Content */}
-                        <div className="prose prose-lg max-w-none text-gray-600 prose-headings:font-bold prose-headings:text-gray-900 prose-a:text-orange-600 hover:prose-a:text-orange-700">
-                            {/* Rendering HTML content safely */}
-                            <div dangerouslySetInnerHTML={{ __html: newsItem.content }} />
-                        </div>
-
-                        {/* Tags */}
-                        <div className="mt-12 pt-8 border-t border-gray-100">
-                            <div className="flex flex-wrap items-center gap-2">
-                                <Tag className="w-4 h-4 text-gray-400 transform rotate-90" />
-                                {newsItem.tags?.map((tag, idx) => (
-                                    <span key={idx} className="bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-bold px-3 py-1 rounded-full cursor-pointer transition-colors">
-                                        #{tag}
+                            {/* Header Section */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6 }}
+                            >
+                                <div className="flex items-center gap-3 mb-6">
+                                    <span className="px-4 py-1.5 bg-orange-50 text-orange-600 rounded-full text-xs font-black uppercase tracking-wider border border-orange-100">
+                                        {newsItem.category || 'Berita'}
                                     </span>
-                                ))}
-                            </div>
-                        </div>
+                                    <span className="text-gray-300 text-xs font-bold uppercase tracking-wider">•</span>
+                                    <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">{formatDate(newsItem.created_at)}</span>
+                                </div>
 
-                        {/* Author Bio Box */}
-                        <div className="mt-12 bg-linear-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100 flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left relative overflow-hidden shadow-sm">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-200/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                            <div className="w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center flex-shrink-0 border-4 border-orange-100">
-                                <User className="w-8 h-8 text-orange-500" />
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-gray-900 text-lg mb-2">About {newsItem.author}</h4>
-                                <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                                    Administrator resmi Lazismu Banjarnegara. Memberikan informasi terkini seputar kegiatan, laporan, dan program-program keumatan.
-                                </p>
-                                <div className="flex justify-center md:justify-start gap-3">
-                                    <span className="text-xs font-bold text-orange-500 cursor-pointer uppercase hover:underline">View all posts</span>
+                                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.15] mb-8 tracking-tight">
+                                    {newsItem.title}
+                                </h1>
+
+                                {/* Author Block */}
+                                <div className="flex items-center gap-4 mb-10 pb-10 border-b border-gray-100">
+                                    <div className="w-12 h-12 rounded-full bg-gray-100 overflow-hidden ring-2 ring-white shadow-lg">
+                                        <img src={`https://ui-avatars.com/api/?name=${newsItem.author || 'Admin'}&background=random`} alt="Author" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-0.5">Penulis</p>
+                                        <p className="text-sm font-black text-gray-900">{newsItem.author || 'Tim Redaksi'}</p>
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {/* Featured Image - Interactive */}
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                className="rounded-3xl overflow-hidden shadow-2xl shadow-gray-200 mb-12 group relative aspect-video"
+                            >
+                                <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700 z-10" />
+                                <img
+                                    src={newsItem.image_url || 'https://via.placeholder.com/800x600'}
+                                    alt={newsItem.title}
+                                    className="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-[1.5s] ease-in-out"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/800x600?text=No+Image';
+                                    }}
+                                />
+                            </motion.div>
+
+                            {/* Article Content */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.8, delay: 0.4 }}
+                                className="prose prose-lg md:prose-xl max-w-none text-gray-600 
+                                prose-headings:font-black prose-headings:text-gray-900 prose-headings:tracking-tight prose-headings:mt-10 prose-headings:mb-5
+                                prose-p:leading-8 prose-p:text-gray-600 prose-p:font-medium prose-p:mb-6
+                                prose-ul:list-disc prose-ul:pl-5 prose-ul:my-6
+                                prose-li:marker:text-orange-600 prose-li:mb-2 prose-li:text-gray-600 prose-li:font-medium
+                                prose-a:text-orange-600 prose-a:font-bold prose-a:no-underline hover:prose-a:underline hover:prose-a:text-orange-700 
+                                prose-img:rounded-3xl prose-img:shadow-xl prose-img:my-10 prose-img:w-full
+                                prose-strong:text-gray-900 prose-strong:font-black
+                                prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:bg-gray-50 prose-blockquote:py-6 prose-blockquote:px-8 prose-blockquote:rounded-r-2xl prose-blockquote:text-gray-800 prose-blockquote:font-bold prose-blockquote:not-italic prose-blockquote:shadow-sm
+                                prose-hr:border-gray-200 prose-hr:my-12"
+                            >
+                                <div dangerouslySetInnerHTML={{ __html: newsItem.content }} />
+                            </motion.div>
+
+                            {/* Footer Tags */}
+                            <div className="mt-16 pt-8 border-t border-gray-100">
+                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Tags</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {['Berita', 'Lazismu', 'Terbaru', 'Update'].map((tag, i) => (
+                                        <span key={i} className="px-5 py-2 bg-gray-50 text-gray-600 rounded-full text-xs font-bold uppercase tracking-wide hover:bg-gray-900 hover:text-white cursor-pointer transition-all duration-300"># {tag}</span>
+                                    ))}
                                 </div>
                             </div>
+
                         </div>
 
-                        {/* Navigation Links (Next/Prev) */}
-                        <div className="mt-8 grid grid-cols-2 gap-4">
-                            <div className="p-6 border border-gray-100 rounded-xl hover:border-orange-200 transition-colors group cursor-pointer text-left">
-                                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider block mb-2 group-hover:text-orange-500">Previous Post</span>
-                                <h5 className="font-bold text-gray-800 line-clamp-2 text-sm">Laporan Tahunan Lazismu 2023</h5>
-                            </div>
-                            <div className="p-6 border border-gray-100 rounded-xl hover:border-orange-200 transition-colors group cursor-pointer text-right">
-                                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider block mb-2 group-hover:text-orange-500">Next Post</span>
-                                <h5 className="font-bold text-gray-800 line-clamp-2 text-sm">Penyaluran Beasiswa Mentari 2025</h5>
-                            </div>
-                        </div>
+                        {/* Sidebar Column (Sticky) */}
+                        <div className="lg:w-[35%] relative hidden lg:block">
+                            <div className="sticky top-32 space-y-8">
 
-                    </div>
-
-                    {/* Sidebar Styled Like Reference */}
-                    <div className="lg:w-[30%] space-y-10">
-                        {/* Search Widget */}
-                        <div className="bg-white rounded-xl">
-                            <h4 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-orange-500 pl-3 py-1 bg-linear-to-r from-orange-50/50 to-transparent">Pencarian</h4>
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="Telusuri..."
-                                    className="w-full pl-4 pr-12 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                                />
-                                <button className="absolute right-0 top-0 h-full px-4 text-gray-400 hover:text-orange-600">
-                                    <Search className="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Recent Posts Widget */}
-                        <div>
-                            <h4 className="text-lg font-bold text-gray-900 mb-6 border-l-4 border-orange-500 pl-3 py-1 bg-linear-to-r from-orange-50/50 to-transparent">Berita Terpopuler</h4>
-                            <div className="space-y-6">
-                                {newsData.slice(0, 3).map((item) => (
-                                    <Link to={`/berita/${item.id}`} key={item.id} className="flex gap-4 group cursor-pointer border-b border-gray-50 pb-4 last:border-0">
-                                        <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                                            <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                        </div>
-                                        <div className="flex flex-col justify-center">
-                                            <h5 className="font-bold text-gray-800 text-sm leading-snug group-hover:text-orange-600 transition-colors line-clamp-2 mb-2">
-                                                {item.title}
-                                            </h5>
-                                            <div className="flex items-center gap-2 text-[10px] text-gray-400 uppercase font-semibold">
-                                                <Calendar className="w-3 h-3 text-orange-400" />
-                                                {item.date}
+                                {/* Quick Stats Card */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.5 }}
+                                    className="bg-gray-50 rounded-3xl p-8 border border-gray-100/50 backdrop-blur-xl"
+                                >
+                                    <h3 className="font-black text-gray-900 mb-6 text-lg">Informasi Berita</h3>
+                                    <div className="space-y-6">
+                                        <div className="flex items-center justify-between group">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-400 group-hover:text-orange-500 transition-colors shadow-sm">
+                                                    <Eye className="w-5 h-5" />
+                                                </div>
+                                                <span className="text-sm font-bold text-gray-500">Dilihat</span>
                                             </div>
+                                            <span className="font-black text-gray-900">1.2k</span>
                                         </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Help Banner Widget */}
-                        <div className="relative rounded-2xl overflow-hidden group shadow-lg">
-                            <div className="absolute inset-0 bg-gray-900/20 group-hover:bg-gray-900/10 transition-colors z-10"></div>
-                            <img
-                                src="https://lazismubanjarnegara.org/wp-content/uploads/2024/05/bg-donasi.jpg"
-                                alt="Donasi"
-                                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
-                            />
-                            <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-                                <h4 className="text-xl font-bold text-white mb-2">Butuh Bantuan?</h4>
-                                <p className="text-xs text-gray-300 mb-4 leading-relaxed">Salurkan donasi terbaik anda melalui Lazismu Kantor Layanan Banjarnegara.</p>
-                                <button className="w-full bg-orange-600 hover:bg-orange-500 text-white py-3 rounded font-bold text-sm transition-colors flex items-center justify-center gap-2 uppercase tracking-wide">
-                                    <Phone className="w-3 h-3" />
-                                    Hubungi Kami
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Categories Widget */}
-                        <div>
-                            <h4 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-orange-500 pl-3 py-1 bg-linear-to-r from-orange-50/50 to-transparent">Kategori</h4>
-                            <div className="space-y-1">
-                                {categories.map((cat, idx) => (
-                                    <div key={idx} className="flex items-center justify-between group cursor-pointer p-2 hover:bg-orange-50 rounded transition-colors border-b border-gray-50 border-dashed last:border-0">
-                                        <div className="flex items-center gap-3 text-gray-600 group-hover:text-orange-600 text-sm font-medium">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-orange-300 group-hover:bg-orange-600 transition-colors"></span>
-                                            <span>{cat.name}</span>
+                                        <div className="w-full h-px bg-gray-200/50" />
+                                        <div className="flex items-center justify-between group">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-400 group-hover:text-orange-500 transition-colors shadow-sm">
+                                                    <Clock className="w-5 h-5" />
+                                                </div>
+                                                <span className="text-sm font-bold text-gray-500">Estimasi Baca</span>
+                                            </div>
+                                            <span className="font-black text-gray-900">5 Menit</span>
                                         </div>
-                                        <span className="text-gray-400 text-xs font-bold group-hover:text-orange-600">
-                                            ({cat.count})
-                                        </span>
                                     </div>
-                                ))}
+
+                                    <div className="mt-8 flex flex-col gap-3">
+                                        <button className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold hover:bg-black hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-gray-900/20">
+                                            <Share2 className="w-4 h-4" />
+                                            Bagikan
+                                        </button>
+                                        <button className="w-full py-4 bg-white border border-gray-200 text-gray-900 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 flex items-center justify-center gap-3">
+                                            <Bookmark className="w-4 h-4" />
+                                            Simpan
+                                        </button>
+                                    </div>
+                                </motion.div>
+
+                                {/* Related News */}
+                                <div>
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="font-black text-gray-900 text-lg">Berita Lainnya</h3>
+                                        <Link to="/berita" className="text-xs font-bold text-orange-600 hover:text-orange-700">LIHAT SEMUA</Link>
+                                    </div>
+                                    <div className="space-y-6">
+                                        {relatedNews.map((related, idx) => (
+                                            <Link to={`/berita/${related.id}`} key={idx} className="group flex gap-5 items-start">
+                                                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gray-200 shrink-0 relative">
+                                                    <img
+                                                        src={related.image_url || 'https://via.placeholder.com/150'}
+                                                        alt={related.title}
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=No+Image';
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="py-1">
+                                                    <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider mb-2 block">{formatDate(related.created_at)}</span>
+                                                    <h4 className="font-bold text-gray-900 leading-snug group-hover:text-orange-600 transition-colors line-clamp-2">
+                                                        {related.title}
+                                                    </h4>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
 
-            {/* Footer Separator */}
-            <div className="border-t border-gray-100 mt-12"></div>
+            <Footer />
         </div>
     );
 };

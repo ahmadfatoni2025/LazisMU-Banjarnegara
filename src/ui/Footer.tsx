@@ -1,8 +1,8 @@
 import {
-    Heart,
-    Phone, Mail, MapPin, Facebook,
-    Instagram, Youtube, MessageCircle,
+    Heart, Phone, Mail, MapPin, Facebook,
+    Instagram, Youtube, MessageCircle, Lock,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
@@ -47,11 +47,18 @@ const Footer = () => {
                     <div>
                         <h3 className="text-lg font-bold mb-6">Tautan Cepat</h3>
                         <ul className="space-y-3">
-                            {['Tentang Kami', 'Program', 'Laporan Keuangan', 'Artikel', 'Kalkulator Zakat', 'Kontak'].map((link) => (
-                                <li key={link}>
-                                    <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors">
-                                        {link}
-                                    </a>
+                            {[
+                                { name: 'Tentang Kami', path: '/latar-belakang' },
+                                { name: 'Program', path: '/program' },
+                                { name: 'Laporan Keuangan', path: '/laporan-keuangan' },
+                                { name: 'Artikel', path: '/artikel' },
+                                { name: 'Kalkulator Zakat', path: '/kalkulator-zakat' },
+                                { name: 'Panel Admin', path: '/login' },
+                            ].map((link) => (
+                                <li key={link.name}>
+                                    <Link to={link.path} className="text-gray-400 hover:text-orange-400 transition-colors">
+                                        {link.name}
+                                    </Link>
                                 </li>
                             ))}
                         </ul>
@@ -104,7 +111,10 @@ const Footer = () => {
                         <div className="flex flex-wrap justify-center gap-6">
                             <a href="#" className="text-gray-400 hover:text-white text-sm">Kebijakan Privasi</a>
                             <a href="#" className="text-gray-400 hover:text-white text-sm">Syarat & Ketentuan</a>
-                            <a href="#" className="text-gray-400 hover:text-white text-sm">Sertifikasi</a>
+                            <Link to="/login" className="text-gray-400 hover:text-orange-400 text-sm flex items-center gap-1">
+                                <Lock className="w-3 h-3" />
+                                Login Admin
+                            </Link>
                         </div>
                     </div>
                 </div>

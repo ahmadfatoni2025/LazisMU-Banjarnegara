@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Heart, Menu, X, ChevronDown, Search } from 'lucide-react';
+import { Heart, Menu, X, ChevronDown, Search, LogOut, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navItems = [
@@ -38,7 +38,20 @@ const Navbar = () => {
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const location = useLocation();
+
+    useEffect(() => {
+        const token = localStorage.getItem('admin_token');
+        setIsAdmin(!!token);
+    }, [location]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
+        setIsAdmin(false);
+        window.location.href = '/';
+    };
 
     // Determine visibility state:
     // Solid background (isScrolled true) if:
@@ -75,6 +88,7 @@ const Navbar = () => {
         <header className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm py-3 text-gray-800' : 'bg-transparent py-4 text-white'}`}>
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="flex items-center justify-between gap-4">
+                    {/* ... existing header content ... */}
                     {/* Logo - Flex Shrink allowed to keep size but give space */}
                     <div className="flex-shrink-0">
                         <Link to="/" className="flex items-center gap-3 group">
@@ -197,6 +211,32 @@ const Navbar = () => {
                             </button>
                         </div>
 
+                        {/* News Dashboard Button - Only show if already Logged In */}
+                        {isAdmin && (
+                            <>
+                                <Link
+                                    to="/buat-berita"
+                                    className={`hidden lg:flex px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-md transform hover:-translate-y-0.5 whitespace-nowrap ${isScrolled
+                                        ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-500/30'
+                                        : 'bg-white text-emerald-600 hover:bg-emerald-50'
+                                        }`}
+                                >
+                                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                                    Buat Berita
+                                </Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className={`hidden lg:flex px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-md transform hover:-translate-y-0.5 whitespace-nowrap ${isScrolled
+                                        ? 'bg-red-600 text-white hover:bg-red-700 shadow-red-500/30'
+                                        : 'bg-white/10 text-white hover:bg-white/20'
+                                        }`}
+                                >
+                                    <LogOut className="w-4 h-4 mr-2" />
+                                    Logout
+                                </button>
+                            </>
+                        )}
+
                         {/* Zakat Calculator Button */}
                         <Link
                             to="/kalkulator-zakat"
@@ -285,9 +325,28 @@ const Navbar = () => {
                                     </div>
                                 ))}
 
+                                {isAdmin && (
+                                    <>
+                                        <Link
+                                            to="/buat-berita"
+                                            className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold mt-4 flex items-center justify-center gap-2"
+                                        >
+                                            <LayoutDashboard className="w-4 h-4" />
+                                            Buat Berita
+                                        </Link>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full py-3 bg-red-50 text-red-600 border border-red-100 rounded-xl font-semibold mt-2 flex items-center justify-center gap-2"
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                            Logout Admin
+                                        </button>
+                                    </>
+                                )}
+
                                 <Link
                                     to="/kalkulator-zakat"
-                                    className="w-full py-3 bg-white border border-orange-600 text-orange-600 rounded-xl font-semibold mt-4 flex items-center justify-center gap-2 hover:bg-orange-50 transition-colors"
+                                    className="w-full py-3 bg-white border border-orange-600 text-orange-600 rounded-xl font-semibold mt-2 flex items-center justify-center gap-2 hover:bg-orange-50 transition-colors"
                                 >
                                     Kalkulator Zakat
                                 </Link>

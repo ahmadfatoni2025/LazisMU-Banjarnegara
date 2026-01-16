@@ -148,10 +148,7 @@ const Kantor = () => {
                                         src="https://maps.google.com/maps?q=Lazismu+Banjarnegara,+Jl.+Pemuda+No.83&t=&z=15&ie=UTF8&iwloc=&output=embed"
                                         className="grayscale-[0.2] contrast-[1.1] transition-all hover:grayscale-0"
                                     ></iframe>
-                                    <div className="absolute inset-x-0 bottom-0 p-8 bg-linear-to-t from-black/20 to-transparent pointer-events-none" />
                                 </div>
-                                {/* Accent Decoration */}
-                                <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-orange-600 rounded-full blur-3xl opacity-10 -z-10" />
                             </FadeInUp>
                         </div>
                     </div>

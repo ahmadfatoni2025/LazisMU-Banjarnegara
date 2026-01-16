@@ -19,6 +19,7 @@ import Footer from '../ui/Footer';
 
 interface DonationData {
     program: string;
+    campaignTitle: string | null;
     amount: number;
     isAnonymous: boolean;
 }
@@ -66,7 +67,7 @@ const Pembayaran = () => {
         }
     }, [activeStep]);
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (activeStep === 0) {
             if (!donorInfo.isAnonymous && (!donorInfo.name || !donorInfo.email || !donorInfo.phone)) {
                 alert('Mohon lengkapi data diri Anda');
@@ -85,6 +86,42 @@ const Pembayaran = () => {
             alert('Silakan pilih metode pembayaran');
             return;
         }
+
+        // Jika akan pindah ke step Konfirmasi (Step 2)
+        if (activeStep === 1) {
+            try {
+                const response = await fetch('http://localhost:3000/api/transaksi', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: donorInfo.isAnonymous ? 'Hamba Allah' : donorInfo.name,
+                        email: donorInfo.email,
+                        phone: donorInfo.phone,
+                        program_utama: donationData?.program,
+                        sub_program: donorInfo.subProgram,
+                        campaign_name: donationData?.campaignTitle, // Kirim ini ke backend
+                        amount: donationData?.amount,
+                        message: donorInfo.message,
+                        payment_method: selectedPayment?.fullName || selectedPayment?.name,
+                        is_anonymous: donorInfo.isAnonymous
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Gagal menyimpan transaksi');
+                }
+
+                const result = await response.json();
+                console.log('Transaksi tersimpan:', result);
+            } catch (error) {
+                console.error('Error saving transaction:', error);
+                alert('Gagal memproses transaksi. Silakan coba lagi.');
+                return;
+            }
+        }
+
         setActiveStep(prev => prev + 1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -307,7 +344,7 @@ const Pembayaran = () => {
                             <p className="text-gray-500">Selesaikan pembayaran sebelum waktu habis</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-orange-600 to-orange-700 text-white rounded-3xl p-8 text-center shadow-2xl shadow-orange-200">
+                        <div className="bg-linear-to-br from-orange-600 to-orange-700 text-white rounded-3xl p-8 text-center shadow-2xl shadow-orange-200">
                             <div className="flex items-center justify-center gap-2 mb-3 opacity-90">
                                 <Clock className="w-5 h-5" />
                                 <span className="text-sm font-medium uppercase tracking-wider">Batas Waktu</span>
@@ -360,7 +397,7 @@ const Pembayaran = () => {
                         </div>
 
                         <div className="bg-blue-50 p-6 rounded-2xl flex gap-4 text-blue-700 border border-blue-100">
-                            <Shield className="w-6 h-6 flex-shrink-0" />
+                            <Shield className="w-6 h-6 shrink-0" />
                             <div className="text-sm leading-relaxed">
                                 <strong className="block mb-1">Keamanan Terjamin</strong>
                                 Pastikan nominal transfer sesuai hingga 3 digit terakhir untuk verifikasi otomatis yang lebih cepat.
