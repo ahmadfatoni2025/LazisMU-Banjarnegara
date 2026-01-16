@@ -14,7 +14,6 @@ import AnnualRecap from '../ui/AnnualRecap';
 import ImpactDashboard from '../ui/ImpactDashboard';
 import backgroundVideo from '../assets/Backgroundvideo.mp4';
 import Berdonasi from './Berdonasi';
-import Berita from './Berita';
 
 // Animation Components
 const FadeInUp = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (

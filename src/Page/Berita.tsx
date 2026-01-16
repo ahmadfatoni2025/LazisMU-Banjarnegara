@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Calendar, ArrowRight, Search, Edit, Trash2, FileText, LayoutDashboard, Database } from 'lucide-react';
+import { Calendar, ArrowRight, Search, Edit, Trash2, LayoutDashboard, Database } from 'lucide-react';
 import Navbar from '../ui/Navbar';
 import Footer from '../ui/Footer';
 

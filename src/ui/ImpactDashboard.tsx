@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll } from 'framer-motion';
-import { Users, School, HeartPulse, ArrowUpRight, ArrowRight, Edit, Save, X, LayoutDashboard } from 'lucide-react';
+import { School, HeartPulse, ArrowUpRight, ArrowRight, Edit, Save } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ImpactDashboard = () => {
@@ -11,7 +11,6 @@ const ImpactDashboard = () => {
     });
 
     const [stats, setStats] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editForm, setEditForm] = useState({ katgori: '', total_jiwa: 0, total_donasi: 0 });
@@ -27,10 +26,8 @@ const ImpactDashboard = () => {
             const response = await fetch('http://localhost:3000/api/statistik');
             const data = await response.json();
             setStats(data);
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching statistics:', error);
-            setLoading(false);
         }
     };
 
@@ -55,19 +52,6 @@ const ImpactDashboard = () => {
                 fetchStats();
             }
         } catch (err) { alert('Gagal update'); }
-    };
-
-    const getProgramDetails = (kategori: string) => {
-        switch (kategori?.toLowerCase()) {
-            case 'pendidikan':
-                return { icon: School, color: 'bg-blue-50', textColor: 'text-blue-600', tag: 'Pendidikan', image: "https://muhammadiyah.or.id/wp-content/uploads/2025/05/Lazismu-Luncurkan-Gerakan-Zakat-Nasional-untuk-Pendidikan.jpeg" };
-            case 'kesehatan':
-                return { icon: HeartPulse, color: 'bg-emerald-50', textColor: 'text-emerald-600', tag: 'Kesehatan', image: "https://pwmjateng.com/wp-content/uploads/2022/08/Lazismu-Blora.jpeg" };
-            case 'sosial':
-                return { icon: Users, color: 'bg-orange-50', textColor: 'text-orange-600', tag: 'Sosial', image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=800" };
-            default:
-                return { icon: Users, color: 'bg-gray-50', textColor: 'text-gray-600', tag: 'Umum', image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=800" };
-        }
     };
 
     const formatAmountDisplay = (val: number) => {
